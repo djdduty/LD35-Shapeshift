@@ -10,18 +10,19 @@ playState = {
 
         this.lasttime = game.time.now;
 
-        game.socket.on("worldState", function(data) {game.state.getCurrentState().onWorldState(data)});
+        game.socket.on("worldState", function(data) {game.state.getCurrentState().onWorldState(data);});
+        game.gameScene = new Scene();
     },
 
     onWorldState: function(data) {
         //console.log(data);
         //TODO: setup world state
+        game.gameScene.fromState(data);
     },
 
     pause: function() {
         //This will preferably go to a pause screen rather than disconnect them outright, TODO
-        game.socket.disconnect();
-        game.state.start('menu');
+        game.state.start('pause');
     },
 
     update: function() {

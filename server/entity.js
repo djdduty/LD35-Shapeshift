@@ -1,6 +1,6 @@
-function Entity(userName, id)
+function Entity(id)
 {
-    this.userName = userName;
+    this.username = '';
     this.health = 100;
     this.x = 0;
     this.y = 0;

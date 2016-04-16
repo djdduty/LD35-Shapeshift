@@ -119,11 +119,12 @@ function setEventHandlers()
     server.sockets.on("connection", onConnect);
 }
 
+var lastEntityId;
 function onConnect(client) {
     util.log("Client connected: "+client.id);
     client.emit("identify", {id: client.id});
 
-    var player = new Player(client.id);
+    var player = new Player(client.id, ++lastEntityId);
     scene.addPlayer(player);
 
     client.on("disconnect", onDisconnect);
@@ -156,11 +157,11 @@ function onSetUsername(data) {
     }
     this.emit("usernameOk");
 
-    var player = scene.getPlayer(this.id);
-    if(player) player.username = data.username;
+    var player = scene.getPlayerByClient(this.id);
+    if(player) player.entity.username = data.username;
     //this is the official "Joined the game" event
     var state = scene.toState();
-    this.emit('worldState', {data: JSON.stringify(state)});
+    this.emit('worldState', state);
 }
 
 function onPlayerPickup(data) {

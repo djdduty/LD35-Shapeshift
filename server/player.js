@@ -1,8 +1,8 @@
 var Entity = require("./entity");
 
-function Player(ident) {
-    this.clientID = ident;
-    this.Entity = new Entity;
+function Player(client, id) {
+    this.clientID = client;
+    this.entity = new Entity(id);
 }
 
 module.exports = Player;

@@ -17,10 +17,22 @@ Scene.prototype.toState = function() {
 
 Scene.prototype.fromState = function(state) {
     //load from state and update objects accordingly
-    for(var i = 0; i < state.entities.length; i++)
+    for(var i = 0; i < state.players.length; i++)
     {
-
+        //set local player to corresponding state.player
+        var remote = state.players[i];
+        var local = this.getPlayerByClient(remote.clientID);
+        if(!local) {
+            //doesn't exist, we should create a new local to reflect the remote
+            local = new Player(remote.clientID, remote.entity.id);
+            this.players.push(local);
+        }
+        for(var prop in remote.entity) {
+            var val = remote.entity[prop];
+            local.entity[prop] = val;
+        }
     }
+    console.log(this.players);
 }
 
 Scene.prototype.sinceState = function(fromState) {
@@ -28,7 +40,8 @@ Scene.prototype.sinceState = function(fromState) {
     return this.toState();
 }
 
-Scene.prototype.getPlayer = function(id) {
+//by client id
+Scene.prototype.getPlayerByClient = function(id) {
     for(var i = 0; i < this.players.length; i++) {
         if(this.players[i].clientID == id) {
             return this.players[i];
