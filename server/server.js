@@ -72,7 +72,7 @@ function onSetUsername(data) {
     util.log("Client: "+this.id+" setting username: "+data.username);
     var username = data.username;
     if( username === null || username === "null" || username.length < 1 || username.trim().length < 1) {
-        this.emit("usernameBad", {errMsg:"Username length must be greater than 0!"});
+        this.emit("usernameBad", {errMsg:"Invalid Username!"});
         return;
     }
 
