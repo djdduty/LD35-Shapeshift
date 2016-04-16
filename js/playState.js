@@ -1,15 +1,19 @@
 playState = {
     preload: function() {
 
-                game.load.spritesheet("treea","img/TreeA.png",32,32,64);
-                game.load.spritesheet("treeb","img/TreeB.png",32,32,64);
-                game.load.spritesheet("treec","img/TreeC.png",32,32,64);
+                game.load.spritesheet("treea","img/TreeA.png",128,128,64);
+                game.load.spritesheet("treeb","img/TreeB.png",128,128,64);
+                game.load.spritesheet("treec","img/TreeC.png",128,128,64);
     },
 
     create: function() {
         this.keyboard = game.input.keyboard;
         var spacekey = this.keyboard.addKey(Phaser.Keyboard.ESC);
         spacekey.onDown.addOnce(this.pause, this);
+
+        //Camera setup:
+        game.world.setBounds(0, 0, 1920, 1920);
+        game.gameScene = new ClientScene();
 
         //addkey so that they don't register regular browser events like scrolling
         this.keyboard.addKeyCapture(Phaser.Keyboard.UP);
@@ -20,7 +24,6 @@ playState = {
         this.lasttime = game.time.now;
 
         game.socket.on("worldState", function(data) { game.state.getCurrentState().onWorldState(data); });
-        game.gameScene = new ClientScene();
 
         for(y = 0;y < game.gameScene.scene.world.staticEntities.length;y++)
         {
@@ -30,7 +33,7 @@ playState = {
                 if     (game.gameScene.scene.world.staticEntities[y][x] == 1) Type = "treeb";
                 else if(game.gameScene.scene.world.staticEntities[y][x] == 2) Type = "treec";
 
-                sprite = game.add.sprite(x*32,y*32,Type);
+                sprite = game.add.sprite(x*128,y*128,Type);
             }
         }
     },
@@ -38,7 +41,9 @@ playState = {
     onWorldState: function(data) {
         //console.log(data);
         //TODO: setup world state
-        game.gameScene.fromState(data);
+        if(game.gameScene) {
+            game.gameScene.fromState(data);
+        }
     },
 
     onKeyDown: function(e) {
@@ -98,7 +103,9 @@ playState = {
 
     update: function() {
         delta = (game.time.now - this.lasttime)*0.001;
-        game.gameScene.update(delta);
+        if(game.gameScene) {
+            game.gameScene.update(delta);
+        }
         //this.sprite.position.x = (Math.cos(this.timer) * 200) + 400;
         //this.sprite.position.y = (Math.sin(this.timer) * 200) + 250;
     }

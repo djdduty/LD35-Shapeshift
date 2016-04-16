@@ -1,5 +1,5 @@
 var isServer = false;
-var util = require("util"), io = require("socket.io"), Scene = require("./scene"), Player = require("./player");
+var util = require("util"), io = require("socket.io"), Scene = require("./scene"), Player = require("./player"), World = require("./world");
 
 var DESIRED_TICKRATE = 20;  //client tick rate, rate to send state updates
 var DESIRED_UPDATE   = 120; //higher resolution update loop
@@ -50,7 +50,7 @@ fpsLogger.prototype.reset = function() {
 }
 
 function init() {
-    scene = new Scene();
+    scene = new Scene(new World());
     server = io.listen(3889, {transports: ["websocket"]});
     util.log("Now listening on port 3889");
 

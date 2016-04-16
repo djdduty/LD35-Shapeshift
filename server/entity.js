@@ -7,7 +7,7 @@ function Entity(id)
     this.id = id;
     this.velX = 0;
     this.velY = 0;
-    this.terminalVelocity = 100;
+    this.terminalVelocity = 250;
     this.stopDuration = 250;
 }
 
@@ -24,8 +24,8 @@ Entity.prototype.update = function(delta)
     this.y += (this.velY * sec);
     //find how much to slow per ms
     var reduce = (this.stopDuration / this.terminalVelocity) * delta;
-    this.velX = 0;
-    this.velY = 0;
+    //this.velX = 0;
+    //this.velY = 0;
     //var ratio = this.velX / this.terminalVelocity;
     //this.velX *= (ratio * reduce);
     //ratio = this.velY / this.terminalVelocity;

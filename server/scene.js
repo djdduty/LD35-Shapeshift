@@ -1,7 +1,7 @@
-function Scene() {
+function Scene(world) {
     this.players = [];
     this.projectiles = [];
-    this.world = new World();
+    this.world = world;
 }
 
 Scene.prototype.addPlayer = function(player) {
