@@ -1,9 +1,11 @@
 var util = require("util"), io = require("socket.io"), Scene = require("./scene"), Player = require("./player");
 
-var DESIRED_TICKRATE = 20.0;
+var DESIRED_TICKRATE = 20;  //client tick rate, rate to send state updates
+var DESIRED_UPDATE   = 120; //higher resolution update loop
 
 var server,
-    scene;
+    scene,
+    lastState;
 
 /*
 *
@@ -14,31 +16,101 @@ var server,
 *
 */
 
+//Threshold is the amount of seconds between util logs
+function fpsLogger(name, threshold) {
+    if(!threshold) threshold = 0;
+    this.counter = 0;
+    this.timer = 0;
+    this.logThreshold = threshold;
+    this.name = name;
+}
+
+fpsLogger.prototype.tick = function(delta) {
+    this.timer += delta*0.001;
+    this.counter++;
+
+    if(this.logThreshold > 0) {
+        if(this.timer >= this.logThreshold) {
+            //figure out average fps given threshold in seconds and counter
+            util.log(this.name+": "+this.getAverageFps());
+            this.reset();
+        }
+    }
+}
+
+fpsLogger.prototype.getAverageFps = function() {
+    var toSecond = 1 / this.timer;
+    return Math.floor(this.counter * toSecond);
+}
+
+fpsLogger.prototype.reset = function() {
+    this.timer = 0;
+    this.counter = 0;
+}
+
 function init() {
     scene = new Scene();
     server = io.listen(3889, {transports: ["websocket"]});
     util.log("Now listening on port 3889");
 
     setEventHandlers();
+    setImmediate(tick);
     setImmediate(update);
 }
 
-var curTime = 0, prevTime = 0, delta = 0;
-function update() {
-    prevTime = curTime;
-    curTime = (new Date()).getTime();
-    delta = curTime - prevTime;
+//Returns delta time since time parameter in ms
+function getDeltaTime(time) {
+    var diff = process.hrtime(time);
+    var nano = diff[0] * 1e9 + diff[1];
+    return nano / 1e6;
+}
+
+function enforceTickRate( delta, desiredTickRate, callback ){
+    var desired = (1000 / desiredTickRate);
+    if(delta < desired) {
+        var diff = Math.round(desired - delta);
+        if(diff < 1) { return false; }
+
+        setTimeout(callback, diff);
+        return true;
+    }
+    return false;
+}
+
+//This update function will happen 20 times a second
+var prevTime = process.hrtime(), tickCounter = new fpsLogger('Ticks Per Second');
+function tick() {
+    var delta = getDeltaTime(prevTime);
+    if(enforceTickRate(delta, DESIRED_TICKRATE, tick) === true) {
+        return;
+    }
+
+    prevTime = process.hrtime();
 
     //Send all clients the world state
-    scene.update();
-    var state = scene.toState();
-    server.sockets.emit('worldState', state);
+    tickCounter.tick(delta);
+    var deltaState = scene.sinceState(lastState);
+    server.sockets.emit('worldState', deltaState);
 
-    var diff = (1000 / DESIRED_TICKRATE) - delta;
-    if(diff > 0)
-        setTimeout(update, diff);
-    else
-        setImmediate(update);
+    //lewp
+    setImmediate(tick);
+}
+
+//This update function will happen as many ticks as the server can run it
+var worldPrevTime = process.hrtime(), fpsCounter = new fpsLogger('Frames Per Second');
+function update() {
+    var delta = getDeltaTime(worldPrevTime);
+    if(enforceTickRate(delta, DESIRED_UPDATE, update) === true) {
+        return;
+    }
+
+    worldPrevTime = process.hrtime();
+
+    fpsCounter.tick(delta);
+    scene.update(delta);
+    
+    //lewp
+    setImmediate(update);
 }
 
 function setEventHandlers()
