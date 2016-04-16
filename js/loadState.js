@@ -5,5 +5,13 @@ var loadState = {
 
     create: function() {
         game.state.start('menu');
+    },
+
+    onKeyDown: function(e) {
+
+    },
+
+    onKeyUp: function(e) {
+
     }
 }

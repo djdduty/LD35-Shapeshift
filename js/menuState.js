@@ -8,5 +8,13 @@ var menuState = {
 
     start: function() {
         game.state.start('username');
+    },
+
+    onKeyDown: function(e) {
+
+    },
+
+    onKeyUp: function(e) {
+
     }
 }

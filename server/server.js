@@ -170,6 +170,24 @@ function onPlayerPickup(data) {
 
 function onPlayerMove(data) {
     //Verify movement, calculate velocity, and make it so
+    var player = scene.getPlayerByClient(this.id);
+    //util.log(this.id+" key event: " + data.dir);
+    switch(data.dir) {
+        case 'N':
+            player.northDown = data.isDown === true;
+            break;
+        case 'E':
+            player.eastDown  = data.isDown === true;
+            break;
+        case 'S':
+            player.southDown = data.isDown === true;
+            break;
+        case 'W':
+            player.westDown  = data.isDown === true;
+            break;
+        default:
+            break;
+    }
 }
 
 function onPlayerUse(data) {

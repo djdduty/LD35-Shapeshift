@@ -10,6 +10,9 @@ Scene.prototype.addPlayer = function(player) {
 
 Scene.prototype.update = function(deltaTime) {
     //calculate physics, projectile collisions, player hits, etc.
+    for(var i = 0; i < this.players.length; i++) {
+        this.players[i].update(deltaTime);
+    }
 }
 
 Scene.prototype.toState = function() {
@@ -33,11 +36,12 @@ Scene.prototype.fromState = function(state) {
             local.entity[prop] = val;
         }
     }
-    console.log(this.players);
+    //console.log(this.players);
 }
 
 Scene.prototype.sinceState = function(fromState) {
     //TODO: calculate differences since fromState and return delta
+    //for now this just returns the full state
     return this.toState();
 }
 
@@ -53,7 +57,7 @@ Scene.prototype.getPlayerByClient = function(id) {
 
 Scene.prototype.removePlayer = function(id) {
     //TODO: Save player in some file somewhere
-    var player = this.getPlayer(id);
+    var player = this.getPlayerByClient(id);
     if(player) {
         var ind = this.players.indexOf(player);
         if(ind >= 0) {
