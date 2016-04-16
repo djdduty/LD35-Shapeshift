@@ -22,13 +22,13 @@ playState = {
         game.socket.on("worldState", function(data) { game.state.getCurrentState().onWorldState(data); });
         game.gameScene = new ClientScene();
 
-        for(y = 0;y < game.gameScene.world.staticEntities.length;y++)
+        for(y = 0;y < game.gameScene.scene.world.staticEntities.length;y++)
         {
-            for(x = 0;x < game.gameScene.world.staticEntities[y].length;x++)
+            for(x = 0;x < game.gameScene.scene.world.staticEntities[y].length;x++)
             {
                 Type = "treea";
-                if     (game.gameScene.world.staticEntities[y][x] == 1) Type = "treeb";
-                else if(game.gameScene.world.staticEntities[y][x] == 2) Type = "treec";
+                if     (game.gameScene.scene.world.staticEntities[y][x] == 1) Type = "treeb";
+                else if(game.gameScene.scene.world.staticEntities[y][x] == 2) Type = "treec";
 
                 sprite = game.add.sprite(x*32,y*32,Type);
             }
