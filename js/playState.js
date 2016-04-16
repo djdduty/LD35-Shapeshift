@@ -1,9 +1,9 @@
 playState = {
     preload: function() {
 
-                game.load.spritesheet("treea","img/TreeA.png",128,128,64);
-                game.load.spritesheet("treeb","img/TreeB.png",128,128,64);
-                game.load.spritesheet("treec","img/TreeC.png",128,128,64);
+                game.load.spritesheet("treea","img/TreeA.png",256,256,1);
+                game.load.spritesheet("treeb","img/TreeB.png",256,256,1);
+                game.load.spritesheet("treec","img/TreeC.png",256,256,1);
     },
 
     create: function() {
@@ -33,7 +33,7 @@ playState = {
                 if     (game.gameScene.scene.world.staticEntities[y][x] == 1) Type = "treeb";
                 else if(game.gameScene.scene.world.staticEntities[y][x] == 2) Type = "treec";
 
-                sprite = game.add.sprite(x*128,y*128,Type);
+                sprite = game.add.sprite(x*256,y*256,Type);
             }
         }
     },
