@@ -1,3 +1,4 @@
+var isServer = false;
 var util = require("util"), io = require("socket.io"), Scene = require("./scene"), Player = require("./player");
 
 var DESIRED_TICKRATE = 20;  //client tick rate, rate to send state updates
@@ -108,7 +109,7 @@ function update() {
 
     fpsCounter.tick(delta);
     scene.update(delta);
-    
+
     //lewp
     setImmediate(update);
 }
