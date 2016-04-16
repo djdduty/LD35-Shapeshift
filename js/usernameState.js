@@ -2,7 +2,7 @@ usernameState = {
     create: function() {
         game.socket = this.socket = io.connect("http://djdduty.com:3889", {transports: ["websocket"]});
         this.name = '';
-        game.input.keyboard.addCallbacks(this, this.onKeyDown, this.onKeyUp, this.onPress);
+        game.input.keyboard.addCallbacks(this, null, null, this.onPress);
         game.input.keyboard.addKeyCapture(Phaser.Keyboard.BACKSPACE);
         game.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
 
@@ -35,9 +35,7 @@ usernameState = {
                 break;
 
             case 13:
-                //if(this.name.length > 0 && this.name.trim().length > 0) {
-                    this.socket.emit("setUsername", {username: this.name.trim()});
-                //}
+                this.socket.emit("setUsername", {username: this.name.trim()});
                 break;
 
             case 32:
