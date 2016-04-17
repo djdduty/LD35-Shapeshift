@@ -1,7 +1,7 @@
 var isServer = false;
 var util = require("util"), io = require("socket.io"), Scene = require("./scene"), Player = require("./player"), World = require("./world");
 
-var DESIRED_TICKRATE = 20;  //client tick rate, rate to send state updates
+var DESIRED_TICKRATE = 12;  //client tick rate, rate to send state updates
 var DESIRED_UPDATE   = 120; //higher resolution update loop
 
 var server,

@@ -35,6 +35,7 @@ Scene.prototype.fromState = function(state) {
             var val = remote.entity[prop];
             local.entity[prop] = val;
         }
+        //console.log("Remote velocity x:"+remote.entity.velX+" y:"+remote.entity.velY+", Local velocity x:"+local.entity.velX+" y:"+local.entity.velY);
     }
     //console.log(this.players);
 }
