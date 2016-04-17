@@ -7,6 +7,7 @@ playState = {
         game.load.spritesheet("3","img/Grass0.png",256,256,1);
         game.load.spritesheet("4","img/Water0.png",256,256,1);
         game.load.spritesheet("5","img/Concrete0.png",256,256,1);
+        game.load.spritesheet("player", "img/playerbig.png",28,54,16);
     },
 
     create: function() {

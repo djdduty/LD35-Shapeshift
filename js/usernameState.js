@@ -13,7 +13,7 @@ usernameState = {
         this.errorLabel = game.add.text(game.width/2, game.height/2/2+50, '', {font: '24px Arial', fill: '#FF0000'});
         this.errorLabel.anchor.set(0.5);
 
-        this.socket.on("usernameOk", function(data) { game.username = game.state.getCurrentState().name; game.state.start('play'); });
+        this.socket.on("usernameOk", function(data) { game.username = game.state.getCurrentState().name.trim(); game.state.start('play'); });
         this.socket.on("usernameBad", function(data) {
             game.state.getCurrentState().onBadUsername(data);
         });

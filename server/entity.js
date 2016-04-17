@@ -8,7 +8,7 @@ function Entity(id)
     this.id = id;
     this.velX = 0;
     this.velY = 0;
-    this.terminalVelocity = 300;
+    this.terminalVelocity = 400;
 }
 
 //time it takes for player to stop moving from top speed in ms
@@ -19,7 +19,7 @@ Entity.prototype.intersects = function(x1, y1, w1, h1) {
     h0 = this.height;
     return !(x0 > x1+w1
           || x0+w0 < x1
-          || y0 < y1+h1
+          || y0 > y1+h1
           || y0+h0 < y1);
 }
 

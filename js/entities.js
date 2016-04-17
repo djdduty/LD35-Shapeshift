@@ -10,31 +10,51 @@ function Player(client, id) {
     bmd.ctx.rect(0, 0, 100, 100);
     bmd.ctx.fillStyle = '#ffffff';
     bmd.ctx.fill();
-    this.drawnObject = game.add.sprite(game.world.centerX, game.world.centerY, bmd);
+
+    this.sprite = game.add.sprite(28, 54, 'player');
+    this.sprite.animations.add('walk-right', [ 0,  1,  2,  3]);
+    this.sprite.animations.add('walk-up'   , [ 4,  5,  6,  7]);
+    this.sprite.animations.add('walk-down' , [ 8,  9, 10, 11]);
+    this.sprite.animations.add('walk-left' , [12, 13, 14, 15]);
+    this.sprite.animations.add('idle-right', [0] );
+    this.sprite.animations.add('idle-up'   , [4] );
+    this.sprite.animations.add('idle-down' , [8] );
+    this.sprite.animations.add('idle-left' , [13]);
+
+    this.sprite.animations.play('idle-right', 8, true);
+    this.sprite.scale.set(3);
+    this.sprite.smoothed = false;
+    this.sprite.anchor.setTo(0.5, 0.5);
+
     this.nameLabel = game.add.text(0, 0, '', {font: '24px Arial', fill: '#ffffff'});
     this.nameLabel.stroke = '#000000';
     this.nameLabel.strokeThickness = 5;
     this.nameLabel.anchor.setTo(0.5, 0.5);
-    this.drawnObject.anchor.setTo(0.5, 0.5);
 
     this.northDown = false;
     this.eastDown  = false;
     this.southDown = false;
     this.westDown  = false;
     this.ip = '';
+    this.lastAnim = 'idle-right';
 }
 
 Player.prototype.update = function(delta, geometry) {
     var increase = (this.entity.terminalVelocity / 250)*delta;
-    if(this.northDown === true) { this.entity.velY += -increase; }
-    if(this.eastDown  === true) { this.entity.velX += increase;  }
-    if(this.southDown === true) { this.entity.velY += increase;  }
-    if(this.westDown  === true) { this.entity.velX += -increase; }
+    var anim = 'idle-'+this.lastAnim.split('-')[1];
+    if(this.northDown === true) { this.entity.velY += -increase; anim = 'walk-up'   ; }
+    if(this.eastDown  === true) { this.entity.velX += increase;  anim = 'walk-right'; }
+    if(this.southDown === true) { this.entity.velY += increase;  anim = 'walk-down' ; }
+    if(this.westDown  === true) { this.entity.velX += -increase; anim = 'walk-left' ; }
+    if(anim != this.lastAnim) {
+        this.lastAnim = anim;
+        this.sprite.animations.play(anim, 8, true);
+    }
 
     this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown, geometry);
 
-    this.drawnObject.x = this.entity.x;
-    this.drawnObject.y = this.entity.y;
+    this.sprite.x = this.entity.x;
+    this.sprite.y = this.entity.y;
     this.nameLabel.text = this.username+" - "+this.ip;
     this.nameLabel.x = this.entity.x;
     this.nameLabel.y = this.entity.y - 65;
@@ -42,7 +62,7 @@ Player.prototype.update = function(delta, geometry) {
 }
 
 Player.prototype.removeGraphics = function() {
-    game.world.remove(this.drawnObject);
+    game.world.remove(this.sprite);
     game.world.remove(this.nameLabel);
 }
 
