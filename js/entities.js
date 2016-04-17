@@ -20,12 +20,13 @@ function Player(client, id) {
 }
 
 Player.prototype.update = function(delta) {
-    if(this.northDown === true) { this.entity.velY += -0.25*delta; }
-    if(this.eastDown  === true) { this.entity.velX += 0.25*delta;  }
-    if(this.southDown === true) { this.entity.velY += 0.25*delta;  }
-    if(this.westDown  === true) { this.entity.velX += -0.25*delta; }
+    var increase = (this.entity.terminalVelocity / 500)*delta;
+    if(this.northDown === true) { this.entity.velY += -increase; }
+    if(this.eastDown  === true) { this.entity.velX += increase;  }
+    if(this.southDown === true) { this.entity.velY += increase;  }
+    if(this.westDown  === true) { this.entity.velX += -increase; }
 
-    this.entity.update(delta);
+    this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown);
 
     this.drawnObject.x = this.entity.x;
     this.drawnObject.y = this.entity.y;

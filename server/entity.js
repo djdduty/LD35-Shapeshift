@@ -8,11 +8,10 @@ function Entity(id)
     this.velX = 0;
     this.velY = 0;
     this.terminalVelocity = 250;
-    this.stopDuration = 250;
 }
 
 //time it takes for player to stop moving from top speed in ms
-Entity.prototype.update = function(delta)
+Entity.prototype.update = function(delta, slowDownX, slowDownY)
 {
     if(this.velX > this.terminalVelocity) { this.velX = this.terminalVelocity; }
     if(this.velX < -this.terminalVelocity) { this.velX = -this.terminalVelocity; }
@@ -29,13 +28,25 @@ Entity.prototype.update = function(delta)
     if(this.x+50 > (256*16)) this.x = (256*16)-50;
     if(this.y+50 > (256*16)) this.y = (256*16)-50;
     //find how much to slow per ms
-    var reduce = (this.stopDuration / this.terminalVelocity) * delta;
-    //this.velX = 0;
-    //this.velY = 0;
-    //var ratio = this.velX / this.terminalVelocity;
-    //this.velX *= (ratio * reduce);
-    //ratio = this.velY / this.terminalVelocity;
-    //this.velY *= (ratio * reduce);
+    var reduce = (500 / this.terminalVelocity) * delta;
+    if(slowDownX) {
+        if(this.velX < 0) {
+            this.velX += reduce;
+            if(this.velX > 0) this.velX = 0;
+        } else {
+            this.velX -= reduce;
+            if(this.velX < 0) this.velX = 0;
+        }
+    }
+    if(slowDownY) {
+        if(this.velY < 0) {
+            this.velY += reduce;
+            if(this.velY > 0) this.velY = 0;
+        } else {
+            this.velY -= reduce;
+            if(this.velY < 0) this.velY = 0;
+        }
+    }
 }
 
 Entity.prototype.takeDamage = function(damn,fromEntity)
