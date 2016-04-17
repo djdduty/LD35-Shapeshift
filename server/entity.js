@@ -10,7 +10,7 @@ function Entity(id)
     this.id = id;
     this.velX = 0;
     this.velY = 0;
-    this.terminalVelocity = 400;
+    this.terminalVelocity = 100;
 }
 
 //time it takes for player to stop moving from top speed in ms

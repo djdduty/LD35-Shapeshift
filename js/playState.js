@@ -1,12 +1,14 @@
 playState = {
     preload: function()
     {
-        game.load.spritesheet("0","img/TreeA.png",256,256,1);
-        game.load.spritesheet("1","img/TreeB.png",256,256,1);
-        game.load.spritesheet("2","img/TreeC.png",256,256,1);
-        game.load.spritesheet("3","img/Grass0.png",256,256,1);
-        game.load.spritesheet("4","img/Water0.png",256,256,1);
-        game.load.spritesheet("5","img/Concrete0.png",256,256,1);
+        game.load.spritesheet("0","img/TreeA.png",128,128,1);
+        game.load.spritesheet("1","img/TreeB.png",128,128,1);
+        game.load.spritesheet("2","img/TreeC.png",128,128,1);
+        game.load.spritesheet("3","img/Grass0.png",128,128,1);
+        game.load.spritesheet("4","img/Water0.png",128,128,1);
+        game.load.spritesheet("5","img/Concrete0.png",128,128,1);
+        game.load.spritesheet("10","img/TreeA-Top.png",128,128,1);
+        game.load.spritesheet("11","img/TreeA-Top.png",128,128,1);//TODO: make TreeB-Top
         game.load.spritesheet("player", "img/playerbig.png",28,54,16);
     },
 
@@ -33,7 +35,21 @@ playState = {
         {
             for(x = 0;x < game.gameScene.scene.world.staticEntities[y].length;x++)
             {
-                sprite = game.add.sprite(x*256,y*256,""+game.gameScene.scene.world.staticEntities[y][x]);
+                if(game.gameScene.scene.world.staticEntities[y][x] > -1) {
+                    sprite = game.add.sprite(x*128,y*128,""+game.gameScene.scene.world.staticEntities[y][x]);
+                }
+            }
+        }
+
+        this.treeTops = [];
+        for(y = 0;y < game.gameScene.scene.world.treeTops.length;y++)
+        {
+            for(x = 0;x < game.gameScene.scene.world.treeTops[y].length;x++)
+            {
+                if(game.gameScene.scene.world.treeTops[y][x] > -1) {
+                    sprite = game.add.sprite(x*128,y*128-32,""+game.gameScene.scene.world.treeTops[y][x]);
+                    this.treeTops.push(sprite);
+                }
             }
         }
     },
@@ -126,6 +142,10 @@ playState = {
         this.lasttime = game.time.now;
         if(game.gameScene) {
             game.gameScene.update(delta);
+        }
+
+        for(var i = 0; i < this.treeTops.length; i++) {
+            this.treeTops[i].bringToTop(); //TODO: Use groups and sort by y
         }
         //this.sprite.position.x = (Math.cos(this.timer) * 200) + 400;
         //this.sprite.position.y = (Math.sin(this.timer) * 200) + 250;

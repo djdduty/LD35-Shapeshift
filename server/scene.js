@@ -5,14 +5,15 @@ function Scene(world) {
     this.disconnected = [];
 
     this.geometry = [];
+    var tSize = 128;
     for(y = 0;y < world.staticEntities.length;y++)
     {
         for(x = 0;x < world.staticEntities[y].length;x++)
         {
             if(world.staticEntities[y][x] < 3) {
-                var xpos = x * 256;
-                var ypos = y * 256;
-                var boundingBox = {x:xpos, y:ypos, width:256, height:256};
+                var xpos = x * tSize;
+                var ypos = y * tSize;
+                var boundingBox = {x:xpos, y:ypos, width:tSize, height:tSize};
                 this.geometry.push(boundingBox);
             }
             //sprite = game.add.sprite(x*256,y*256,""+game.gameScene.scene.world.staticEntities[y][x]);

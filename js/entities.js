@@ -22,7 +22,7 @@ function Player(client, id) {
     this.sprite.animations.add('idle-left' , [13]);
 
     this.sprite.animations.play('idle-right');
-    this.sprite.scale.set(3);
+    this.sprite.scale.set(1.5);
     this.sprite.smoothed = false;
     this.sprite.anchor.setTo(0.5, 0.5);
 
@@ -38,10 +38,11 @@ function Player(client, id) {
     this.ip = '';
     this.lastAnim = 'idle-right';
 
-    this.entity.offsetY = 162*0.25;
+    this.entity.offsetY = 81*0.25;
     this.entity.offsetX = 0;
-    this.entity.height = 162*0.5;
-    this.entity.width = 84;
+    this.entity.height = 81*0.5;
+    this.entity.width = 42;
+    this.entity.terminalVelocity = 200;
 }
 
 Player.prototype.update = function(delta, geometry) {
