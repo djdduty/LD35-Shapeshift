@@ -9,7 +9,8 @@ playState = {
         game.load.spritesheet("5","img/Concrete0.png",128,128,1);
         game.load.spritesheet("10","img/TreeA-Top.png",128,128,1);
         game.load.spritesheet("11","img/TreeA-Top.png",128,128,1);//TODO: make TreeB-Top
-        game.load.spritesheet("player", "img/playerbig.png",28,54,16);
+        //game.load.spritesheet("player", "img/playerbig.png",28,54,16);
+        game.load.spritesheet("player", "img/soldier_altcolor.png",64,64*1,36);
     },
 
     create: function() {

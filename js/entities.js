@@ -12,14 +12,14 @@ function Player(client, id) {
     bmd.ctx.fill();
 
     this.sprite = game.add.sprite(28, 54, 'player');
-    this.sprite.animations.add('walk-right', [ 0,  1,  2,  3]);
-    this.sprite.animations.add('walk-up'   , [ 4,  5,  6,  7]);
-    this.sprite.animations.add('walk-down' , [ 8,  9, 10, 11]);
-    this.sprite.animations.add('walk-left' , [12, 13, 14, 15]);
-    this.sprite.animations.add('idle-right', [0] );
-    this.sprite.animations.add('idle-up'   , [4] );
-    this.sprite.animations.add('idle-down' , [8] );
-    this.sprite.animations.add('idle-left' , [13]);
+    this.sprite.animations.add('walk-up'   , [ 0, 1, 2, 3, 4, 5, 6, 7, 8]);
+    this.sprite.animations.add('walk-left' , [ 9,10,11,12,13,14,15,16,17]);
+    this.sprite.animations.add('walk-down' , [18,19,20,21,22,23,24,25,26]);
+    this.sprite.animations.add('walk-right', [27,28,29,30,31,32,33,34,35]);
+    this.sprite.animations.add('idle-right', [27]);
+    this.sprite.animations.add('idle-up'   , [0] );
+    this.sprite.animations.add('idle-down' , [18]);
+    this.sprite.animations.add('idle-left' , [9] );
 
     this.sprite.animations.play('idle-right');
     this.sprite.scale.set(1.5);
@@ -38,20 +38,26 @@ function Player(client, id) {
     this.ip = '';
     this.lastAnim = 'idle-right';
 
-    this.entity.offsetY = 81*0.25;
+    this.entity.offsetY = 96*0.25;
     this.entity.offsetX = 0;
-    this.entity.height = 81*0.5;
-    this.entity.width = 42;
+    this.entity.height = 96*0.5;
+    this.entity.width = 66;
     this.entity.terminalVelocity = 200;
 }
 
 Player.prototype.update = function(delta, geometry) {
     var increase = (this.entity.terminalVelocity / 50)*delta;
     var anim;
-    if(this.northDown === true) { this.entity.velY += -increase; anim = 'walk-up'   ; }
-    if(this.eastDown  === true) { this.entity.velX += increase;  anim = 'walk-right'; }
-    if(this.southDown === true) { this.entity.velY += increase;  anim = 'walk-down' ; }
-    if(this.westDown  === true) { this.entity.velX += -increase; anim = 'walk-left' ; }
+    if(this.northDown === true) { this.entity.velY += -increase; }
+    if(this.southDown === true) { this.entity.velY += increase;  }
+    if(this.eastDown  === true) { this.entity.velX += increase;  }
+    if(this.westDown  === true) { this.entity.velX += -increase; }
+
+    if     (this.entity.velY > 0) { anim = 'walk-down'; }
+    else if(this.entity.velY < 0) { anim = 'walk-up'; }
+    if     (this.entity.velX > 0) { anim = 'walk-right'; }
+    else if(this.entity.velX < 0) { anim = 'walk-left'; }
+
 
     var lastAnim = this.lastAnim.split('-');
     if(this.entity.velX === 0 && this.entity.velY === 0 && lastAnim[0] !== 'idle') {
@@ -60,7 +66,7 @@ Player.prototype.update = function(delta, geometry) {
 
     if(anim && anim != this.lastAnim) {
         this.lastAnim = anim;
-        this.sprite.animations.play(anim, 10, true);
+        this.sprite.animations.play(anim, 16, true);
     }
 
     this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown, geometry);
