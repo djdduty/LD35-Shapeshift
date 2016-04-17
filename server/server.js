@@ -196,6 +196,11 @@ function onPlayerMove(data) {
 
 function onPlayerUse(data) {
     //Verify item use and make it so
+    var player = scene.getPlayerByClient(this.id);
+    this.broadcast.emit("playerAttacked", {username: player.username});
+    player._attacking = true;
+    //find players close by, damage them.
+    player.attack(scene.scene.players);
 }
 
 function onPlayerShapeshift(data) {

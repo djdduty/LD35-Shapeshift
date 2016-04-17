@@ -17,6 +17,10 @@ humanForm = {
     attackLeft : [1],
     attackDown : [2],
     attackRight: [3],
+    hurtRight  : 27,
+    hurtLeft   : 9,
+    hurtUp     : 0,
+    hurtDown   : 18,
     attackfps: 9,
     fps: 16
 }
@@ -38,7 +42,11 @@ mageForm = {
     attackLeft : [ 7, 8, 9,10,11,12,13],
     attackDown : [14,15,16,17,18,19,20],
     attackRight: [21,22,23,24,25,26,27],
-    attackfps: 7,
+    hurtRight  : [27],
+    hurtLeft   : [9],
+    hurtUp     : [0],
+    hurtDown   : [18],
+    attackfps: 14,
     fps: 16
 }
 
@@ -58,10 +66,17 @@ function Player(client, id) {
         walkSprite.animations.add('walk-left' , form.walkLeft);
         walkSprite.animations.add('walk-down' , form.walkDown);
         walkSprite.animations.add('walk-right', form.walkRight);
+
         walkSprite.animations.add('idle-right', form.idleRight);
         walkSprite.animations.add('idle-up'   , form.idleUp);
         walkSprite.animations.add('idle-down' , form.idleDown);
         walkSprite.animations.add('idle-left' , form.idleLeft);
+
+        walkSprite.animations.add('hurt-left' , form.hurtLeft);
+        walkSprite.animations.add('hurt-right', form.hurtRight);
+        walkSprite.animations.add('hurt-up'   , form.hurtUp);
+        walkSprite.animations.add('hurt-down' , form.hurtDown);
+        
         walkSprite.visible = false;
         walkSprite.smoothed = false;
         walkSprite.anchor.setTo(0.5, 0.5);
@@ -98,6 +113,8 @@ function Player(client, id) {
     this.entity.width = 44;
     this.entity.terminalVelocity = 200;
     this.attacking = false;
+    this.attackTimer = 0;
+    this.hurt = false;
 }
 
 Player.prototype.getFormByName = function(name) {
@@ -114,19 +131,26 @@ Player.prototype.getCurrentAnimation = function() {
     var prefix;
     if(!form) form = this.forms[0];
     var fps = form.data.fps;
-    if(this.attacking === true) {
-        sprite = form.attack;
-        prefix = 'attack';
-        fps = form.data.attackfps;
+    if(this.hurt === true) {
+        sprite = form.walk;
+        prefix = 'hurt';
+        fps = 1;
         dir = lastAnim[1];
     } else {
-        if(this.entity.velX === 0 && this.entity.velY === 0) {
-            prefix = 'idle';
+        if(this.attacking === true) {
+            sprite = form.attack;
+            prefix = 'attack';
+            fps = form.data.attackfps;
             dir = lastAnim[1];
         } else {
-            prefix = 'walk';
+            if(this.entity.velX === 0 && this.entity.velY === 0) {
+                prefix = 'idle';
+                dir = lastAnim[1];
+            } else {
+                prefix = 'walk';
+            }
+            sprite = form.walk;
         }
-        sprite = form.walk;
     }
 
     if     (this.entity.velY > 0) { dir = 'down';  }
@@ -145,11 +169,24 @@ Player.prototype.getCurrentAnimation = function() {
 }
 
 Player.prototype.update = function(delta, geometry) {
-    var increase = (this.entity.terminalVelocity / 50)*delta;
-    if(this.northDown === true) { this.entity.velY += -increase; }
-    if(this.southDown === true) { this.entity.velY += increase;  }
-    if(this.eastDown  === true) { this.entity.velX += increase;  }
-    if(this.westDown  === true) { this.entity.velX += -increase; }
+    if(this.entity.health > 0) {
+        var increase = (this.entity.terminalVelocity / 50)*delta;
+        if(this.northDown === true) { this.entity.velY += -increase; }
+        if(this.southDown === true) { this.entity.velY += increase;  }
+        if(this.eastDown  === true) { this.entity.velX += increase;  }
+        if(this.westDown  === true) { this.entity.velX += -increase; }
+    }
+
+    if(this.attacking === true) {
+        this.attackTimer += delta;
+        this.entity.velX *= 0.75;
+        this.entity.velY *= 0.75;
+    }
+
+    if(this.attackTimer >= 500) {
+        this.attacking = false;
+        this.attackTimer = 0;
+    }
 
     var animation = this.getCurrentAnimation();
 
@@ -162,12 +199,17 @@ Player.prototype.update = function(delta, geometry) {
     //and the current direction and anim
     if(animation.name !== this.lastAnim || animation.sprite !== this.lastSprite) {
         this.lastAnim = animation.name;
-        animation.sprite.animations.play(animation.name, animation.fps, true);
+        try {
+            animation.sprite.animations.play(animation.name, animation.fps, true);
+        } catch(e) {
+            console.log(animation.name);
+            console.log(e);
+        }
     }
 
     this.lastSprite = animation.sprite;
 
-    this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown, geometry);
+    this.entity.update(delta, (!this.eastDown && !this.westDown), (!this.northDown && !this.southDown), geometry);
 
     animation.sprite.x = this.entity.x;
     animation.sprite.y = this.entity.y;
@@ -180,6 +222,25 @@ Player.prototype.update = function(delta, geometry) {
 Player.prototype.removeGraphics = function() {
     game.world.remove(this.sprite);
     game.world.remove(this.nameLabel);
+}
+
+Player.prototype.startAttack = function() {
+    this.attacking = true;
+    this.attackTimer = 0;
+    if(!this.hurt === true) {
+        var animation = this.getCurrentAnimation();
+        this.lastAnim = animation.name;
+        animation.sprite.animations.getAnimation(animation.name).restart();
+        animation.sprite.animations.play(animation.name, animation.fps, true);
+        if(this.lastSprite) {
+            this.lastSprite.visible = false;
+        }
+
+        this.lastSprite = animation.sprite;
+        animation.sprite.x = this.entity.x;
+        animation.sprite.y = this.entity.y;
+        animation.sprite.visible = true;
+    }
 }
 
 function Projectile(id) {

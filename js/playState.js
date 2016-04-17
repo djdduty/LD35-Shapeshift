@@ -23,7 +23,7 @@ playState = {
         spacekey.onDown.addOnce(this.pause, this);
 
         //Camera setup:
-        game.world.setBounds(0, 0, 256*16,256*16);
+        game.world.setBounds(0, 0, 128*16,128*16);
         game.gameScene = new ClientScene();
 
         //addkey so that they don't register regular browser events like scrolling
@@ -35,6 +35,7 @@ playState = {
         this.lasttime = game.time.now;
 
         game.socket.on("worldState", function(data) { game.state.getCurrentState().onWorldState(data); });
+        game.socket.on("playerAttacked", function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
 
         for(y = 0;y < game.gameScene.scene.world.staticEntities.length;y++)
         {
@@ -94,7 +95,10 @@ playState = {
                 break;
             case 'KeyS':
                 game.socket.emit('playerShapeshift', {form:'mage'});
+                return;
+                break;
             case 'Space':
+                game.gameScene.getPlayer().startAttack();
                 game.socket.emit('playerUse');
                 return;
                 break;
