@@ -23,5 +23,5 @@ function adjust() {
 }
 window.addEventListener('resize', function() {
     adjust();
-    alert("To fix the camera centering please refresh the game");
+    //alert("To fix the camera centering please refresh the game");
 });

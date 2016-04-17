@@ -2,6 +2,22 @@ function Scene(world) {
     this.players = [];
     this.projectiles = [];
     this.world = world;
+    this.disconnected = [];
+
+    this.geometry = [];
+    for(y = 0;y < world.staticEntities.length;y++)
+    {
+        for(x = 0;x < world.staticEntities[y].length;x++)
+        {
+            if(world.staticEntities[y][x] < 3) {
+                var xpos = x * 256;
+                var ypos = y * 256;
+                var boundingBox = {x:xpos, y:ypos, width:256, height:256};
+                this.geometry.push(boundingBox);
+            }
+            //sprite = game.add.sprite(x*256,y*256,""+game.gameScene.scene.world.staticEntities[y][x]);
+        }
+    }
 }
 
 Scene.prototype.addPlayer = function(player) {
@@ -11,12 +27,14 @@ Scene.prototype.addPlayer = function(player) {
 Scene.prototype.update = function(deltaTime) {
     //calculate physics, projectile collisions, player hits, etc.
     for(var i = 0; i < this.players.length; i++) {
-        this.players[i].update(deltaTime);
+        this.players[i].update(deltaTime, this.geometry);
     }
 }
 
 Scene.prototype.toState = function() {
-    return {players: this.players, projectiles: this.projectiles};
+    var disconnected = this.disconnected;
+    this.disconnected = [];
+    return {players: this.players, projectiles: this.projectiles, disconnected: disconnected};
 }
 
 Scene.prototype.fromState = function(state) {
@@ -43,6 +61,10 @@ Scene.prototype.fromState = function(state) {
             local.entity[prop] = val;
         }
     }
+
+    for(var i = 0; i < state.disconnected.length; i++) {
+        this.removePlayer(state.disconnected[i]);
+    }
     //console.log(this.players);
 }
 
@@ -65,10 +87,13 @@ Scene.prototype.getPlayerByClient = function(id) {
 Scene.prototype.removePlayer = function(id) {
     //TODO: Save player in some file somewhere
     var player = this.getPlayerByClient(id);
+    if(player.removeGraphics)
+        player.removeGraphics();
     if(player) {
         var ind = this.players.indexOf(player);
         if(ind >= 0) {
             this.players.splice(ind, 1);
+            this.disconnected.push(id);
             return true;
         }
         return false;

@@ -1,6 +1,7 @@
 function ClientScene(clientID) {
     this.clientID = clientID;
-    this.scene = new Scene(new World());
+    var world = new World();
+    this.scene = new Scene(world);
 }
 
 ClientScene.prototype.fromState = function(state) {

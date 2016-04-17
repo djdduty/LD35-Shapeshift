@@ -24,20 +24,26 @@ function Player(client, id) {
     this.ip = '';
 }
 
-Player.prototype.update = function(delta) {
+Player.prototype.update = function(delta, geometry) {
     var increase = (this.entity.terminalVelocity / 250)*delta;
     if(this.northDown === true) { this.entity.velY += -increase; }
     if(this.eastDown  === true) { this.entity.velX += increase;  }
     if(this.southDown === true) { this.entity.velY += increase;  }
     if(this.westDown  === true) { this.entity.velX += -increase; }
 
-    this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown);
+    this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown, geometry);
 
     this.drawnObject.x = this.entity.x;
     this.drawnObject.y = this.entity.y;
     this.nameLabel.text = this.username+" - "+this.ip;
     this.nameLabel.x = this.entity.x;
     this.nameLabel.y = this.entity.y - 65;
+    game.world.bringToTop(this.nameLabel);
+}
+
+Player.prototype.removeGraphics = function() {
+    game.world.remove(this.drawnObject);
+    game.world.remove(this.nameLabel);
 }
 
 function Enemy(id) {
