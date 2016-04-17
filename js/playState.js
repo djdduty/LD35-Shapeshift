@@ -12,7 +12,7 @@ playState = {
         spacekey.onDown.addOnce(this.pause, this);
 
         //Camera setup:
-        game.world.setBounds(0, 0, 1920, 1920);
+        game.world.setBounds(0, 0, 256*16,256*16);
         game.gameScene = new ClientScene();
 
         //addkey so that they don't register regular browser events like scrolling
