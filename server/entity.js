@@ -26,8 +26,8 @@ Entity.prototype.update = function(delta)
     if(this.x-50 < 0) this.x = 50;
     if(this.y-50 < 0) this.y = 50;
 
-    if(this.x+50 > 1920) this.x = 1920-50;
-    if(this.y+50 > 1920) this.y = 1920-50;
+    if(this.x+50 > (256*16)) this.x = (256*16)-50;
+    if(this.y+50 > (256*16)) this.y = (256*16)-50;
     //find how much to slow per ms
     var reduce = (this.stopDuration / this.terminalVelocity) * delta;
     //this.velX = 0;

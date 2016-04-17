@@ -15,6 +15,7 @@ function Player(client, id) {
 }
 
 Player.prototype.update = function(delta) {
+    console.log(delta);
     var second = delta * 0.001;
     this.entity.x += (this.entity.velX*second);
     this.entity.y += (this.entity.velY*second);

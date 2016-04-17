@@ -102,7 +102,8 @@ playState = {
     },
 
     update: function() {
-        delta = (game.time.now - this.lasttime)*0.001;
+        delta = (game.time.now - this.lasttime);
+        this.lasttime = game.time.now;
         if(game.gameScene) {
             game.gameScene.update(delta);
         }
