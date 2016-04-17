@@ -1,9 +1,12 @@
 playState = {
-    preload: function() {
-
-                game.load.spritesheet("treea","img/TreeA.png",256,256,1);
-                game.load.spritesheet("treeb","img/TreeB.png",256,256,1);
-                game.load.spritesheet("treec","img/TreeC.png",256,256,1);
+    preload: function()
+    {
+        game.load.spritesheet("0","img/TreeA.png",256,256,1);
+        game.load.spritesheet("1","img/TreeB.png",256,256,1);
+        game.load.spritesheet("2","img/TreeC.png",256,256,1);
+        game.load.spritesheet("3","img/Grass0.png",256,256,1);
+        game.load.spritesheet("4","img/Water0.png",256,256,1);
+        game.load.spritesheet("5","img/Concrete0.png",256,256,1);
     },
 
     create: function() {
@@ -29,11 +32,7 @@ playState = {
         {
             for(x = 0;x < game.gameScene.scene.world.staticEntities[y].length;x++)
             {
-                Type = "treea";
-                if     (game.gameScene.scene.world.staticEntities[y][x] == 1) Type = "treeb";
-                else if(game.gameScene.scene.world.staticEntities[y][x] == 2) Type = "treec";
-
-                sprite = game.add.sprite(x*256,y*256,Type);
+                sprite = game.add.sprite(x*256,y*256,""+game.gameScene.scene.world.staticEntities[y][x]);
             }
         }
     },
