@@ -93,7 +93,7 @@ playState = {
                 player.eastDown = true;
                 break;
             case 'KeyS':
-                console.log(game.gameScene.scene.players);
+                game.socket.emit('playerShapeshift', {form:'mage'});
             case 'Space':
                 game.socket.emit('playerUse');
                 return;

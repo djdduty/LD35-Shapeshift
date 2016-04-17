@@ -17,6 +17,7 @@ function Player(client, ip, id) {
     this.entity.height = 64*0.5;
     this.entity.width = 44;
     this.entity.terminalVelocity = 200;
+    this.currentForm = 'base';
 }
 
 Player.prototype.update = function(delta, geometry) {

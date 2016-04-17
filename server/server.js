@@ -175,6 +175,7 @@ function onPlayerMove(data) {
     //Verify movement, calculate velocity, and make it so
     var player = scene.getPlayerByClient(this.id);
     //util.log(this.id+" key event: " + data.dir);
+    if(!player) { return; }
     switch(data.dir) {
         case 'N':
             player.northDown = data.isDown === true;
@@ -199,6 +200,11 @@ function onPlayerUse(data) {
 
 function onPlayerShapeshift(data) {
     //Verify shapeshift and make it so
+    var player = scene.getPlayerByClient(this.id);
+    if(!player) { return; }
+    //TODO Validate data.form and make sure that player can shift into that form
+    util.log(player.username+" shapeshifted into "+data.form);
+    player.currentForm = data.form;
 }
 
 init();
