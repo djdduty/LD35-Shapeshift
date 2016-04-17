@@ -73,6 +73,10 @@ playState = {
                 break;
             case 'KeyS':
                 console.log(game.gameScene.scene.players);
+            case 'Space':
+                game.socket.emit('playerUse');
+                return;
+                break;
             default:
                 return;
                 break;

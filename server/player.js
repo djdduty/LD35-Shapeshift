@@ -12,11 +12,15 @@ function Player(client, ip, id) {
     this.westDown  = false;
     this.username = '';
     this.ip = ip;
+    this.entity.offsetY = 162*0.25;
+    this.entity.offsetX = 0;
+    this.entity.height = 162*0.5;
+    this.entity.width  = 84;
 }
 
 Player.prototype.update = function(delta, geometry) {
     //util.log(delta);
-    var increase = (this.entity.terminalVelocity / 250)*delta;
+    var increase = (this.entity.terminalVelocity / 50)*delta;
     if(this.northDown === true) { this.entity.velY += -increase; }
     if(this.eastDown  === true) { this.entity.velX += increase;  }
     if(this.southDown === true) { this.entity.velY += increase;  }

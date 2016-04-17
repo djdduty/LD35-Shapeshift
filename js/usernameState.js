@@ -1,6 +1,6 @@
 usernameState = {
     create: function() {
-        game.socket = this.socket = io.connect("http://djdduty.com:3889", {transports: ["websocket"]});
+        game.socket = this.socket = io.connect("http://vm1.djdduty.com:3889", {transports: ["websocket"]});
         this.name = '';
         game.input.keyboard.addCallbacks(this, null, null, this.onPress);
         game.input.keyboard.addKeyCapture(Phaser.Keyboard.BACKSPACE);

@@ -3,6 +3,8 @@ function Entity(id)
     this.health = 100;
     this.x = 0;
     this.y = 0;
+    this.offsetY = 0;
+    this.offsetX = 0;
     this.width = 100;
     this.height = 100;
     this.id = id;
@@ -13,8 +15,8 @@ function Entity(id)
 
 //time it takes for player to stop moving from top speed in ms
 Entity.prototype.intersects = function(x1, y1, w1, h1) {
-    var x0 = this.x - this.width/2,
-    y0 = this.y - this.height/2,
+    var x0 = (this.x+this.offsetX) - this.width/2,
+    y0 = (this.y+this.offsetY) - this.height/2,
     w0 = this.width,
     h0 = this.height;
     return !(x0 > x1+w1

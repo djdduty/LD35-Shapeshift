@@ -21,7 +21,7 @@ function Player(client, id) {
     this.sprite.animations.add('idle-down' , [8] );
     this.sprite.animations.add('idle-left' , [13]);
 
-    this.sprite.animations.play('idle-right', 8, true);
+    this.sprite.animations.play('idle-right');
     this.sprite.scale.set(3);
     this.sprite.smoothed = false;
     this.sprite.anchor.setTo(0.5, 0.5);
@@ -37,25 +37,36 @@ function Player(client, id) {
     this.westDown  = false;
     this.ip = '';
     this.lastAnim = 'idle-right';
+
+    this.entity.offsetY = 162*0.25;
+    this.entity.offsetX = 0;
+    this.entity.height = 162*0.5;
+    this.entity.width = 84;
 }
 
 Player.prototype.update = function(delta, geometry) {
-    var increase = (this.entity.terminalVelocity / 250)*delta;
-    var anim = 'idle-'+this.lastAnim.split('-')[1];
+    var increase = (this.entity.terminalVelocity / 50)*delta;
+    var anim;
     if(this.northDown === true) { this.entity.velY += -increase; anim = 'walk-up'   ; }
     if(this.eastDown  === true) { this.entity.velX += increase;  anim = 'walk-right'; }
     if(this.southDown === true) { this.entity.velY += increase;  anim = 'walk-down' ; }
     if(this.westDown  === true) { this.entity.velX += -increase; anim = 'walk-left' ; }
-    if(anim != this.lastAnim) {
+
+    var lastAnim = this.lastAnim.split('-');
+    if(this.entity.velX === 0 && this.entity.velY === 0 && lastAnim[0] !== 'idle') {
+        anim = 'idle-'+lastAnim[1];
+    }
+
+    if(anim && anim != this.lastAnim) {
         this.lastAnim = anim;
-        this.sprite.animations.play(anim, 8, true);
+        this.sprite.animations.play(anim, 10, true);
     }
 
     this.entity.update(delta, !this.eastDown && !this.westDown, !this.northDown && !this.southDown, geometry);
 
     this.sprite.x = this.entity.x;
     this.sprite.y = this.entity.y;
-    this.nameLabel.text = this.username+" - "+this.ip;
+    this.nameLabel.text = this.username;
     this.nameLabel.x = this.entity.x;
     this.nameLabel.y = this.entity.y - 65;
     game.world.bringToTop(this.nameLabel);
