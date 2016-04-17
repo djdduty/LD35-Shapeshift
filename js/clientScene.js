@@ -12,7 +12,7 @@ ClientScene.prototype.update = function(delta) {
     this.scene.update(delta);
     var us = this.scene.getPlayerByUsername(game.username);
     if(us) {
-        game.camera.follow(us.sprite);
+        game.camera.follow(us.getCurrentAnimation().sprite);
     }
 }
 

@@ -12,10 +12,10 @@ function Player(client, ip, id) {
     this.westDown  = false;
     this.username = '';
     this.ip = ip;
-    this.entity.offsetY = 96*0.25;
+    this.entity.offsetY = 64*0.25;
     this.entity.offsetX = 0;
-    this.entity.height = 96*0.5;
-    this.entity.width = 66;
+    this.entity.height = 64*0.5;
+    this.entity.width = 44;
     this.entity.terminalVelocity = 200;
 }
 

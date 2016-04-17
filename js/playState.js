@@ -10,7 +10,11 @@ playState = {
         game.load.spritesheet("10","img/TreeA-Top.png",128,128,1);
         game.load.spritesheet("11","img/TreeA-Top.png",128,128,1);//TODO: make TreeB-Top
         //game.load.spritesheet("player", "img/playerbig.png",28,54,16);
-        game.load.spritesheet("player", "img/soldier_altcolor.png",64,64*1,36);
+        game.load.spritesheet("base-walk", "img/soldier_altcolor.png",64,64*1,36);
+        game.load.spritesheet("base-attack", "img/soldier_attack.png",64,64*1,4);
+
+        game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64*1,36);
+        game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64*1,28);
     },
 
     create: function() {
