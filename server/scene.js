@@ -78,7 +78,7 @@ Scene.prototype.removePlayer = function(id) {
 
 Scene.prototype.getPlayerByUsername = function(username) {
     for(var i = 0; i < this.players.length; i++) {
-        if(this.players[i].entity.username.toLowerCase() == username.toLowerCase()) {
+        if(this.players[i].username.toLowerCase() == username.toLowerCase()) {
             return this.players[i];
         }
     }

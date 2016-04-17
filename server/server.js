@@ -121,10 +121,13 @@ function setEventHandlers()
 
 var lastEntityId;
 function onConnect(client) {
-    util.log("Client connected: "+client.id);
+    var ip = client.request.socket.remoteAddress;
+    ip = ip.substring(7, ip.length);
+
+    util.log("Client connected: "+client.id+" from "+ip);
     client.emit("identify", {id: client.id});
 
-    var player = new Player(client.id, ++lastEntityId);
+    var player = new Player(client.id, ip, ++lastEntityId);
     scene.addPlayer(player);
 
     client.on("disconnect", onDisconnect);
@@ -158,7 +161,7 @@ function onSetUsername(data) {
     this.emit("usernameOk");
 
     var player = scene.getPlayerByClient(this.id);
-    if(player) player.entity.username = data.username;
+    if(player) player.username = data.username;
     //this is the official "Joined the game" event
     var state = scene.toState();
     this.emit('worldState', state);

@@ -11,16 +11,21 @@ function Player(client, id) {
     bmd.ctx.fillStyle = '#ffffff';
     bmd.ctx.fill();
     this.drawnObject = game.add.sprite(game.world.centerX, game.world.centerY, bmd);
+    this.nameLabel = game.add.text(0, 0, '', {font: '24px Arial', fill: '#ffffff'});
+    this.nameLabel.stroke = '#000000';
+    this.nameLabel.strokeThickness = 5;
+    this.nameLabel.anchor.setTo(0.5, 0.5);
     this.drawnObject.anchor.setTo(0.5, 0.5);
 
     this.northDown = false;
     this.eastDown  = false;
     this.southDown = false;
     this.westDown  = false;
+    this.ip = '';
 }
 
 Player.prototype.update = function(delta) {
-    var increase = (this.entity.terminalVelocity / 500)*delta;
+    var increase = (this.entity.terminalVelocity / 250)*delta;
     if(this.northDown === true) { this.entity.velY += -increase; }
     if(this.eastDown  === true) { this.entity.velX += increase;  }
     if(this.southDown === true) { this.entity.velY += increase;  }
@@ -30,6 +35,9 @@ Player.prototype.update = function(delta) {
 
     this.drawnObject.x = this.entity.x;
     this.drawnObject.y = this.entity.y;
+    this.nameLabel.text = this.username+" - "+this.ip;
+    this.nameLabel.x = this.entity.x;
+    this.nameLabel.y = this.entity.y - 65;
 }
 
 function Enemy(id) {

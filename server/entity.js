@@ -1,13 +1,12 @@
 function Entity(id)
 {
-    this.username = '';
     this.health = 100;
     this.x = 0;
     this.y = 0;
     this.id = id;
     this.velX = 0;
     this.velY = 0;
-    this.terminalVelocity = 250;
+    this.terminalVelocity = 300;
 }
 
 //time it takes for player to stop moving from top speed in ms
