@@ -31,11 +31,17 @@ Scene.prototype.fromState = function(state) {
             local = new Player(remote.clientID, remote.entity.id);
             this.players.push(local);
         }
+        for(var prop in remote) {
+            if(prop != 'entity') {
+                var val = remote[prop];
+                local[prop] = val;
+            }
+        }
+
         for(var prop in remote.entity) {
             var val = remote.entity[prop];
             local.entity[prop] = val;
         }
-        //console.log("Remote velocity x:"+remote.entity.velX+" y:"+remote.entity.velY+", Local velocity x:"+local.entity.velX+" y:"+local.entity.velY);
     }
     //console.log(this.players);
 }
