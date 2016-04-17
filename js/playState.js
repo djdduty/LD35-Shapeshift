@@ -49,19 +49,27 @@ playState = {
     onKeyDown: function(e) {
         var direction = '';
         if(e.repeat === true) return;
+
+        var player = game.gameScene.getPlayer();
+        if(!player) return;
+
         switch(e.code)
         {
             case 'ArrowUp':
                 direction = 'N';
+                player.northDown = true;
                 break;
             case 'ArrowDown':
                 direction = 'S';
+                player.southDown = true;
                 break;
             case 'ArrowLeft':
                 direction = 'W';
+                player.westDown = true;
                 break;
             case 'ArrowRight':
                 direction = 'E';
+                player.eastDown = true;
                 break;
             case 'KeyS':
                 console.log(game.gameScene.scene.players);
@@ -75,19 +83,27 @@ playState = {
     onKeyUp: function(e) {
         var direction = '';
         if(e.repeat === true) return;
+
+        var player = game.gameScene.getPlayer();
+        if(!player) return;
+
         switch(e.code)
         {
             case 'ArrowUp':
                 direction = 'N';
+                player.northDown = false;
                 break;
             case 'ArrowDown':
                 direction = 'S';
+                player.southDown = false;
                 break;
             case 'ArrowLeft':
                 direction = 'W';
+                player.westDown = false;
                 break;
             case 'ArrowRight':
                 direction = 'E';
+                player.eastDown = false;
                 break;
             default:
                 return;

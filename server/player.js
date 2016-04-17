@@ -14,9 +14,9 @@ function Player(client, id) {
 Player.prototype.update = function(delta) {
     this.entity.velX = 0;
     this.entity.velY = 0;
-    if(this.northDown === true) { this.entity.velY = -500;  }
+    if(this.northDown === true) { this.entity.velY = -500; }
     if(this.eastDown  === true) { this.entity.velX = 500;  }
-    if(this.southDown === true) { this.entity.velY = 500; }
+    if(this.southDown === true) { this.entity.velY = 500;  }
     if(this.westDown  === true) { this.entity.velX = -500; }
     this.entity.update(delta);
 }

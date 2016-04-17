@@ -15,6 +15,15 @@ ClientScene.prototype.update = function(delta) {
     }
 }
 
+ClientScene.prototype.getPlayer = function() {
+    var us = this.scene.getPlayerByUsername(game.username);
+    if(us) {
+        return us;
+    }
+
+    return null;
+}
+
 ClientScene.prototype.thisPlayer = function() {
     if(this.clientID = 0) {
         return null;

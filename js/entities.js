@@ -12,13 +12,22 @@ function Player(client, id) {
     bmd.ctx.fill();
     this.drawnObject = game.add.sprite(game.world.centerX, game.world.centerY, bmd);
     this.drawnObject.anchor.setTo(0.5, 0.5);
+
+    this.northDown = false;
+    this.eastDown  = false;
+    this.southDown = false;
+    this.westDown  = false;
 }
 
 Player.prototype.update = function(delta) {
-    console.log(delta);
-    var second = delta * 0.001;
-    this.entity.x += (this.entity.velX*second);
-    this.entity.y += (this.entity.velY*second);
+    this.entity.velX = 0;
+    this.entity.velY = 0;
+    if(this.northDown === true) { this.entity.velY = -500; }
+    if(this.eastDown  === true) { this.entity.velX = 500;  }
+    if(this.southDown === true) { this.entity.velY = 500;  }
+    if(this.westDown  === true) { this.entity.velX = -500; }
+
+    this.entity.update(delta);
 
     this.drawnObject.x = this.entity.x;
     this.drawnObject.y = this.entity.y;
