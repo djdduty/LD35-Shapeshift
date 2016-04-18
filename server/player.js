@@ -10,7 +10,7 @@ var base = {
     speed: 200,
     attackSpeed: 400,
     attackDistance: 100,
-    damageReduction: 0,
+    damageReduction: 25,
 }
 
 var mage = {
