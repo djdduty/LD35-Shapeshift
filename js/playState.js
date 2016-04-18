@@ -245,6 +245,12 @@ playState = {
             game.gameScene.update(delta);
         }
 
+        this.ui0.bringToTop();
+        this.ui1.bringToTop();
+        this.ui2.bringToTop();
+        this.ui3.bringToTop();
+        this.ui4.bringToTop();
+
         //for(var i = 0; i < this.treeTops.length; i++) {
         //    this.treeTops[i].bringToTop(); //TODO: Use groups and sort by y
         //}
