@@ -112,7 +112,6 @@ Scene.prototype.fromState = function(state) {
             local = new Projectile(remote.x, remote.y, remote.velX, remote.velY, remote.owner);
             local.id = remote.id;
             this.projectiles.push(local);
-            console.log(this.projectiles);
         }
         for(var prop in remote) {
             var val = remote[prop];

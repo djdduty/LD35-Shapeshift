@@ -341,14 +341,24 @@ function Projectile(id) {
 function Projectile(x, y, velx, vely, owner) {
     this.x = x;
     this.y = y;
-    this.speed = 750;
-    this.width = 40;
-    this.height = 40;
+    this.speed = 1000;
+    this.width = 64;
+    this.height = 64;
     this.velX = velx;
     this.velY = vely;
+    var angle = Math.atan2(vely, velx);
+    angle = angle * (180/3.14159265);
+    var ind = (angle - (angle % 45)) / 45;
+    ind += 3;
+
+    var start = ind * 8;
+    console.log(ind+" - "+start);
+
     this.id = -1;
     this.username = owner;
-    this.sprite = game.add.sprite(this.width, this.height, '10');
+    this.sprite = game.add.sprite(this.width, this.height, 'fireball');
+    this.sprite.animations.add('fire', [start,start+1, start+2, start+3, start+4, start+5, start+6, start+7]);
+    this.sprite.play('fire', 16, true);
     game.state.getCurrentState().group.add(this.sprite);
     this.sprite.anchor.setTo(0.5, 0.5);
 }

@@ -2,7 +2,7 @@ var lastID = 0;
 function Projectile(x, y, velx, vely, owner) {
     this.x = x;
     this.y = y;
-    this.speed = 750;
+    this.speed = 1000;
     this.width = 64;
     this.height = 64;
     this.velX = velx;

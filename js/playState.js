@@ -58,7 +58,6 @@ playState = {
                 var tid = game.gameScene.scene.world.staticEntities[y][x];
                 if(tid > -1) {
                     sprite = game.add.sprite(x*128,y*128,""+tid);
-                    game.state.getCurrentState().group.add(sprite);
                 }
             }
         }
@@ -70,7 +69,6 @@ playState = {
             {
                 if(game.gameScene.scene.world.treeTops[y][x] > -1) {
                     sprite = game.add.sprite(x*128,y*128-32,""+game.gameScene.scene.world.treeTops[y][x]);
-                    game.state.getCurrentState().group.add(sprite);
                     this.treeTops.push(sprite);
                     this.group.add(sprite);
                 }
@@ -105,23 +103,23 @@ playState = {
     },
     morph0: function()
     {
-        game.socket.emit('unlockShape', {form: 'soldier'});
+        game.socket.emit('playerShapeshift', {form: 'base'});
     },
     morph1: function()
     {
-        game.socket.emit('unlockShape', {form: 'goblin'});
+        game.socket.emit('playerShapeshift', {form: 'goblin'});
     },
     morph2: function()
     {
-        game.socket.emit('unlockShape', {form: 'mage'});
+        game.socket.emit('playerShapeshift', {form: 'mage'});
     },
     morph3: function()
     {
-        game.socket.emit('unlockShape', {form: 'ghost'});
+        game.socket.emit('playerShapeshift', {form: 'ghost'});
     },
     morph4: function()
     {
-        game.socket.emit('unlockShape', {form: 'zombie'});
+        game.socket.emit('playerShapeshift', {form: 'zombie'});
     },
 
     onClick: function(data) {
