@@ -11,7 +11,6 @@ var pauseState = {
     },
 
     onWorldState: function(data) {
-        //this has to implement socket listeners and do something accordingly
         game.gameScene.fromState(data);
     },
 
@@ -21,5 +20,7 @@ var pauseState = {
 
     onKeyUp: function(e) {
 
-    }
+    },
+
+    startAttack: function(data) {}
 }

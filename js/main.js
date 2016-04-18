@@ -6,6 +6,7 @@ game.state.add('menu'       , menuState);
 game.state.add('username'   , usernameState);
 game.state.add('play'       , playState);
 game.state.add('pause'      , pauseState);
+game.state.add('purchase'   , purchaseState);
 
 game.state.start('boot');
 

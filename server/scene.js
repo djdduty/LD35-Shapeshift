@@ -5,16 +5,25 @@ function Scene(world) {
     this.disconnected = [];
 
     this.geometry = [];
+    this.sacred = [];
     var tSize = 128;
     for(y = 0;y < world.staticEntities.length;y++)
     {
         for(x = 0;x < world.staticEntities[y].length;x++)
         {
-            if(world.staticEntities[y][x] < 3) {
+            var index = world.staticEntities[y][x];
+            if(index < 3) {
                 var xpos = x * tSize;
                 var ypos = y * tSize;
                 var boundingBox = {x:xpos, y:ypos, width:tSize, height:tSize};
                 this.geometry.push(boundingBox);
+            }
+
+            if(index === 4 || (index >= 12 && index <= 20)) {
+                var xpos = x * tSize;
+                var ypos = y * tSize;
+                var boundingBox = {x:xpos, y:ypos, width:tSize, height:tSize};
+                this.sacred.push(boundingBox);
             }
             //sprite = game.add.sprite(x*256,y*256,""+game.gameScene.scene.world.staticEntities[y][x]);
         }
@@ -34,23 +43,31 @@ Scene.prototype.update = function(deltaTime) {
     if(this.projectiles.length > 0) {
         for(var i = this.projectiles.length-1; i >= 0; i--) {
             var projectile = this.projectiles[i];
+            var owner = this.getPlayerByUsername(projectile.username);
+            if(!owner) { continue; }
             projectile.update(deltaTime);
-            for(var n = 0; n < this.players.length; n++) {
-                var player = this.players[n];
-                //console.log(player.username+" vs "+projectile.username);
-                //console.log(projectile);
-                if(player.username !== projectile.username) {
-                    if(player.entity.intersects(projectile.x, projectile.y, projectile.width, projectile.height)) {
-                        var form = player.getFormOrBase(player.currentForm);
-                        var damage = projectile.damage - (projectile.damage * (form.damageReduction*0.01));
-                        player.entity.health -= damage;
-                        player.hurt = true;
-                        if(player.health === 0) {
-                            var killer = this.getPlayerByUsername(projectile.owner);
-                            if(killer) { killer.score += 10; }
+            if(!owner.onSacredTile(this)) {
+                for(var n = 0; n < this.players.length; n++) {
+                    var player = this.players[n];
+                    if(player.entity.health <= 0 || player.onSacredTile(this)) continue;
+                    //console.log(player.username+" vs "+projectile.username);
+                    //console.log(projectile);
+                    if(player.username !== projectile.username) {
+                        if(player.entity.intersects(projectile.x, projectile.y, projectile.width, projectile.height)) {
+                            var form = player.getFormOrBase(player.currentForm);
+                            var damage = projectile.damage - (projectile.damage * (form.damageReduction*0.01));
+                            player.entity.health -= damage;
+                            player.hurt = true;
+                            //console.log(projectile.username+' hurt '+player.username);
+                            if(player.entity.health <= 0) {
+                                player.entity.health = 0;
+                                var killer = owner;
+                                if(killer) { killer.score += 10; }
+                                console.log(killer.username+' killed '+player.username);
+                            }
+                            this.removeProjectileById(projectile.id);
+                            continue;
                         }
-                        this.removeProjectile(0);
-                        continue;
                     }
                 }
             }
@@ -58,7 +75,7 @@ Scene.prototype.update = function(deltaTime) {
             for(var n = 0; n < this.geometry.length; n++) {
                 var geom = this.geometry[n];
                 if(projectile.intersects(geom.x, geom.y, geom.width, geom.height)) {
-                    this.removeProjectile(0);
+                    this.removeProjectileById(projectile.id);
                 }
             }
             //check intersection with players and do damage if not owner
@@ -175,6 +192,17 @@ Scene.prototype.getPlayerByUsername = function(username) {
         }
     }
     return null;
+}
+
+Scene.prototype.removeProjectileById = function(id) {
+    projind = -1;
+    for(var i = 0; i < this.projectiles.length; i++) {
+        if(this.projectiles[i].id == id) projind = i;
+    }
+    if(projind >= 0) {
+        this.projectiles[projind].remove();
+        this.projectiles.splice(projind, 1);
+    }
 }
 
 Scene.prototype.removeProjectile = function(index) {

@@ -19,7 +19,7 @@ var mage = {
     damage: 10,
     ranged: true,
     speed: 250,
-    attackSpeed: 500,
+    attackSpeed: 300,
     attackDistance: 50,
     damageReduction: 0,
 };
@@ -56,13 +56,15 @@ function Player(client, ip, id) {
     this.entity.width = 44;
     this.entity.terminalVelocity = 200;
     this.currentForm = 'base';
-    this._attacking = false;
-    this._attackTimer = 0;
+    this.attacking = false;
+    this.attackTimer = 0;
     this.hurt = false;
     this.hurtTimer = 0;
     this.score = 0;
+    this.shapeshiftTimer = 0;
+    this.shapeshiftCounter = 0;
 
-    this.unlockedForms = ['base', 'mage'];
+    this.unlockedForms = ['base'];
 }
 
 Player.prototype.getValidForms = function() {
@@ -80,6 +82,11 @@ Player.prototype.getFormOrBase = function(name) {
 }
 
 Player.prototype.update = function(delta, geometry) {
+    this.shapeshiftCounter -= delta;
+    this.shapeshiftTimer -= delta;
+    if(this.shapeshiftTimer <= 0) {
+        this.currentForm = 'base';
+    }
     //util.log(delta);
     if(this.entity.health <= 0) {
         this.entity.velX = 0;
@@ -102,15 +109,15 @@ Player.prototype.update = function(delta, geometry) {
         this.hurtTimer = 0;
     }
 
-    if(this._attacking) {
-        this._attackTimer += delta;
+    if(this.attacking) {
+        this.attackTimer += delta;
         this.entity.velX *= 0.75;
         this.entity.velY *= 0.75;
     }
 
-    if(this._attackTimer > form.attackSpeed) {
-        this._attacking = false;
-        this._attackTimer = 0;
+    if(this.attackTimer > form.attackSpeed) {
+        this.attacking = false;
+        this.attackTimer = 0;
     }
 
     this.entity.update(delta, (!this.eastDown && !this.westDown), (!this.northDown && !this.southDown), geometry);
@@ -123,6 +130,7 @@ Player.prototype.attack = function(scene, direction) {
     //util.log(this.username+" Attacking");
     var form = getFormOrBase(this.currentForm);
     var projectile;
+    this.attacking = true;
     if(form.ranged === true) {
         //generate a projectile using the direction vector
         var velX = 500 * direction.x;
@@ -133,7 +141,7 @@ Player.prototype.attack = function(scene, direction) {
     } else {
         for(var i = 0; i < scene.players.length; i++) {
             var enemy = scene.players[i];
-            if(enemy.username == this.username) { continue; }
+            if(enemy.username == this.username || enemy.onSacredTile(scene)) { continue; }
             var distance = this.distance(enemy.entity.x, enemy.entity.y);
 
             if(distance <= form.attackDistance && enemy.entity.health > 0) {
@@ -162,6 +170,16 @@ Player.prototype.distance = function(x, y) {
     var b = this.entity.y - y;
     var csqr = (a*a)+(b*b);
     return Math.sqrt(csqr);
+}
+
+Player.prototype.onSacredTile = function(scene) {
+    for(var i = 0; i < scene.sacred.length; i++) {
+        var geom = scene.sacred[i];
+        if(this.entity.intersectsObj(geom)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 module.exports = Player;

@@ -123,14 +123,7 @@ playState = {
     },
 
     onClick: function(data) {
-        var x = game.input.x + game.camera.x;
-        var y = game.input.y + game.camera.y;
-        var player = game.gameScene.getPlayer();
-        if(!player) return;
-        var deltaX = x - player.entity.x;
-        var deltaY = y - player.entity.y;
-        var mag = Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
-        game.socket.emit('playerUse', {angle: {x:deltaX/mag,y:deltaY/mag}});
+
     },
 
     onWorldState: function(data) {
@@ -169,6 +162,15 @@ playState = {
                 game.socket.emit('playerShapeshift', {form:'mage'});
                 return;
                 break;
+            case 'Space':
+                var player = game.gameScene.getPlayer();
+                if(player && player.entity.health <= 0) {
+                    game.socket.emit('playerUse', {angle: {x:0, y:0}});
+                } else {
+                    if(player.onSacredTile(game.gameScene.scene)) {
+                        game.state.start('purchase');
+                    }
+                }
             default:
                 return;
                 break;
@@ -214,6 +216,23 @@ playState = {
     },
 
     update: function() {
+
+        if(game.input.activePointer.isDown) {
+            var player = game.gameScene.getPlayer();
+            if(!player) { return; }
+            if(player.attacking === false && player.entity.health > 0) {
+                var x = game.input.x + game.camera.x;
+                var y = game.input.y + game.camera.y;
+                var player = game.gameScene.getPlayer();
+                if(!player) return;
+                var deltaX = x - player.entity.x;
+                var deltaY = y - player.entity.y;
+                var mag = Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
+                game.socket.emit('playerUse', {angle: {x:deltaX/mag,y:deltaY/mag}});
+                player.attacking = true;
+            }
+        }
+
         game.world.bringToTop(this.group);
         delta = (game.time.now - this.lasttime);
         this.lasttime = game.time.now;

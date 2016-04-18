@@ -230,19 +230,23 @@ function onUnlockShape(data) {
         return;
     }
 
+    if(player.unlockedForms.indexOf(desired.name) >= 0) {
+        this.emit("purchaseError", {errMsg: "You already have that shape unlocked!"});
+    }
+
     player.score -= desired.cost;
     player.unlockedForms.push(desired.name);
+    this.emit("purchaseOk", {msg: "Purchased! You have "+player.score+" points left."});
 }
 
 function onPlayerUse(data) {
     //Verify item use and make it so
     var player = scene.getPlayerByClient(this.id);
-    if(player._attacking === false) {
+    if(player.attacking === false) {
         if(player.entity.health > 0) {
             this.broadcast.emit("playerAttacked", {username: player.username});
-            player._attacking = true;
             //find players close by, damage them.
-            util.log(data.angle);
+            //util.log(data.angle);
             var proj = player.attack(scene.scene, data.angle);
             if(proj) {
                 scene.scene.projectiles.push(proj);
@@ -275,6 +279,15 @@ function onPlayerShapeshift(data) {
         this.emit("shapeshiftError", {errMsg: "You have not unlocked that shape!"});
         return;
     }
+
+    if(player.shapeshiftCounter > 0) {
+        var n = player.shapeshiftCounter/1000;
+        this.emit("shapeshiftError", {errMsg: "You cannot shapeshift for another "+n.toFixed(0)+" seconds"});
+        return;
+    }
+
+    player.shapeshiftCounter = 60000;
+    player.shapeshiftTimer   = 30000;
     //Verify shapeshift and make it so
     var player = scene.getPlayerByClient(this.id);
     if(!player) { return; }

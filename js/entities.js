@@ -35,7 +35,7 @@ mageForm = {
     damage: 10,
     ranged: true,
     speed: 250,
-    attackSpeed: 500,
+    attackSpeed: 300,
     attackDistance: 50,
     damageReduction: 0,
     name: 'mage',
@@ -179,6 +179,16 @@ Player.prototype.getFormOrBase = function(name) {
     return form;
 }
 
+Player.prototype.onSacredTile = function(scene) {
+    for(var i = 0; i < scene.sacred.length; i++) {
+        var geom = scene.sacred[i];
+        if(this.entity.intersectsObj(geom)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 Player.prototype.getCurrentAnimation = function() {
     var lastAnim = this.lastAnim.split('-');
     var sprite;
@@ -243,12 +253,14 @@ Player.prototype.update = function(delta, geometry) {
         this.attackTimer += delta;
         this.entity.velX *= 0.75;
         this.entity.velY *= 0.75;
+        //console.log('reducing');
     }
 
-    if(this.attackTimer >= formStat.attackSpeed) {
+    /*if(this.attackTimer >= formStat.attackSpeed) {
+        //console.log(formStat.attackSpeed);
         this.attacking = false;
         this.attackTimer = 0;
-    }
+    }*/
 
     var animation = this.getCurrentAnimation();
 
@@ -344,19 +356,15 @@ function Projectile(x, y, velx, vely, owner) {
     this.velY = vely;
     var angle = Math.atan2(vely, velx);
     angle = angle * (180/3.14159265);
-    var ind = (angle - (angle % 45)) / 45;
-    ind += 3;
-
-    var start = ind * 8;
-    console.log(ind+" - "+start);
 
     this.id = -1;
     this.username = owner;
     this.sprite = game.add.sprite(this.width, this.height, 'fireball');
-    this.sprite.animations.add('fire', [start,start+1, start+2, start+3, start+4, start+5, start+6, start+7]);
+    this.sprite.animations.add('fire', [32, 33, 34, 35, 36, 37, 38, 39]);
     this.sprite.play('fire', 16, true);
     game.state.getCurrentState().group.add(this.sprite);
     this.sprite.anchor.setTo(0.5, 0.5);
+    this.sprite.angle = angle;
 }
 
 Projectile.prototype.intersects = function(x1, y1, w1, h1) {
