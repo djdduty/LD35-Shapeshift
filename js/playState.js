@@ -168,10 +168,6 @@ playState = {
                 direction = 'E';
                 player.eastDown = true;
                 break;
-            case 'KeyS':
-                game.socket.emit('playerShapeshift', {form:'mage'});
-                return;
-                break;
             case 'Space':
                 var player = game.gameScene.getPlayer();
                 if(player && player.entity.health <= 0) {
@@ -226,9 +222,8 @@ playState = {
     },
 
     update: function() {
-
+        var player = game.gameScene.getPlayer();
         if(game.input.activePointer.isDown) {
-            var player = game.gameScene.getPlayer();
             if(!player) { return; }
             if(player.attacking === false && player.entity.health > 0) {
                 var x = game.input.x + game.camera.x;

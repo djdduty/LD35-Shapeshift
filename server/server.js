@@ -231,7 +231,8 @@ function onUnlockShape(data) {
     }
 
     if(player.unlockedForms.indexOf(desired.name) >= 0) {
-        this.emit("purchaseError", {errMsg: "You already have that shape unlocked!"});
+        this.emit("purchaseError", {errMsg: "You already purchased that shape!"});
+        return;
     }
 
     player.score -= desired.cost;

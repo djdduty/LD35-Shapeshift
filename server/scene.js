@@ -171,16 +171,14 @@ Scene.prototype.getPlayerByClient = function(id) {
 Scene.prototype.removePlayer = function(id) {
     //TODO: Save player in some file somewhere
     var player = this.getPlayerByClient(id);
+    if(!player) { return false; }
     if(player.removeGraphics)
         player.removeGraphics();
-    if(player) {
-        var ind = this.players.indexOf(player);
-        if(ind >= 0) {
-            this.players.splice(ind, 1);
-            this.disconnected.push(id);
-            return true;
-        }
-        return false;
+    var ind = this.players.indexOf(player);
+    if(ind >= 0) {
+        this.players.splice(ind, 1);
+        this.disconnected.push(id);
+        return true;
     }
     return false;
 }

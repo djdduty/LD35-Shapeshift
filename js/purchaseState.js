@@ -7,16 +7,17 @@ var purchaseState = {
         spacekey.onDown.addOnce(this.start, this);
 
         var formSales = [
-            {sprite: "soldierui", onDown: function() { game.socket.emit('unlockShape', {form: "base"   }); } },
-            {sprite: "goblinui" , onDown: function() { game.socket.emit('unlockShape', {form: "goblin" }); } },
-            {sprite: "mageui"   , onDown: function() { game.socket.emit('unlockShape', {form: "mage"   }); } },
-            {sprite: "ghostui"  , onDown: function() { game.socket.emit('unlockShape', {form: "ghost"  }); } },
-            {sprite: "zombieui" , onDown: function() { game.socket.emit('unlockShape', {form: "zombie" }); } }
+            {sprite: "soldierui", desc: "The basic shape that all players start with, moderate attack, movement speed, and damage.", onDown: function() { game.socket.emit('unlockShape', {form: "base"   }); } },
+            {sprite: "goblinui" , desc: "The basic shape that all players start with, moderate attack, movement speed, and damage.", onDown: function() { game.socket.emit('unlockShape', {form: "goblin" }); } },
+            {sprite: "mageui"   , desc: "The basic shape that all players start with, moderate attack, movement speed, and damage.", onDown: function() { game.socket.emit('unlockShape', {form: "mage"   }); } },
+            {sprite: "ghostui"  , desc: "The basic shape that all players start with, moderate attack, movement speed, and damage.", onDown: function() { game.socket.emit('unlockShape', {form: "ghost"  }); } },
+            {sprite: "zombieui" , desc: "The basic shape that all players start with, moderate attack, movement speed, and damage.", onDown: function() { game.socket.emit('unlockShape', {form: "zombie" }); } }
         ];
 
         for(var i = 0; i < formSales.length; i++) {
             var sale = formSales[i];
-            var sprite = game.add.sprite(game.width/2, (i+1)*128+30, sale.sprite);
+            var sprite = game.add.sprite(game.width/2-374, (i+1)*128+30, sale.sprite);
+            var text   = game.add.text(game.width/2-300, (i+1*128, {font: '24px Arial', fill: "#FFFFFF", wordWrap: true, wordWrapWidth: 300}));
             sprite.anchor.setTo(0.5, 0.5);
             sprite.inputEnabled = true;
             sprite.events.onInputDown.add(sale.onDown);
