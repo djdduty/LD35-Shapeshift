@@ -47,7 +47,7 @@ var ghost = {
 };
 
 var zombie = {
-    cost: 30,
+    cost: 50,
     name: 'zombie',
     damage: 30,
     ranged: false,
