@@ -19,16 +19,17 @@ humanForm = {
     idleRight: [27],
     idleUp   : [0],
     idleDown : [18],
-    attackUp   : [0],
-    attackLeft : [1],
-    attackDown : [2],
-    attackRight: [3],
+    attackUp   : [3],
+    attackLeft : [14],
+    attackDown : [24],
+    attackRight: [32],
     hurtRight  : [27],
     hurtLeft   : [9],
     hurtUp     : [0],
     hurtDown   : [18],
     attackfps: 9,
-    fps: 16
+    fps: 16,
+    spriteScale: 1.0
 }
 
 mageForm = {
@@ -59,10 +60,75 @@ mageForm = {
     hurtUp     : [0],
     hurtDown   : [18],
     attackfps: 14,
-    fps: 16
+    fps: 16,
+    spriteScale: 1.0
 }
 
-valid_forms = [humanForm, mageForm];
+goblinForm = {
+    damage: 6,
+    ranged: false,
+    speed: 350,
+    attackSpeed: 200,
+    attackDistance: 75,
+    damageReduction: 0,
+    name: 'goblin',
+    spritePrefix: 'goblin',
+    frameWidth: 64,
+    frameHeight: 64,
+    walkLeft : [33,34,35,36,37,38,39],
+    walkRight: [11,12,13,14,15,16,17],
+    walkUp   : [22,23,24,25,26,27,28],
+    walkDown : [ 0, 1, 2, 3, 4, 5, 6],
+    idleLeft : [39],
+    idleRight: [17],
+    idleUp   : [28],
+    idleDown : [ 6],
+    attackUp   : [29,30,31,32],
+    attackLeft : [40,41,42,43],
+    attackDown : [ 7, 8, 9,10],
+    attackRight: [18,19,20,21],
+    hurtRight  : [15],
+    hurtLeft   : [37],
+    hurtUp     : [26],
+    hurtDown   : [45],
+    attackfps: 20,
+    fps: 14,
+    spriteScale: 1.0
+}
+
+ghostForm = {
+    damage: 20,
+    ranged: true,
+    speed: 150,
+    attackSpeed: 400,
+    attackDistance: 75,
+    damageReduction: 10,
+    name: 'ghost',
+    spritePrefix: 'ghost',
+    frameWidth: 32,
+    frameHeight: 32,
+    walkLeft : [27,28,29,30],
+    walkRight: [18,19,20,21],
+    walkUp   : [18,19,20,21],
+    walkDown : [27,28,29,30],
+    idleLeft : [27],
+    idleRight: [18],
+    idleUp   : [18],
+    idleDown : [27],
+    attackUp   : [ 9,10,11,12,13,14],
+    attackLeft : [36,37,38,39,40,41],
+    attackDown : [ 7, 8, 9,10],
+    attackRight: [36,37,38,39,40,41],
+    hurtRight  : [18],
+    hurtLeft   : [27],
+    hurtUp     : [18],
+    hurtDown   : [27],
+    attackfps: 15,
+    fps: 12,
+    spriteScale: 2.0
+}
+
+valid_forms = [humanForm, mageForm, goblinForm, ghostForm];
 function getFormByName(name) {
     for(var i = 0; i < valid_forms.length; i++) {
         if(valid_forms[i].name == name) return valid_forms[i];
@@ -275,6 +341,7 @@ Player.prototype.update = function(delta, geometry) {
         this.lastAnim = animation.name;
         try {
             animation.sprite.animations.play(animation.name, animation.fps, true);
+            animation.sprite.scale.setTo(formStat.spriteScale);
         } catch(e) {
             console.log(animation);
             console.log(animation.sprite);
@@ -360,7 +427,7 @@ function Projectile(x, y, velx, vely, owner) {
     this.id = -1;
     this.username = owner;
     this.sprite = game.add.sprite(this.width, this.height, 'fireball');
-    this.sprite.animations.add('fire', [32, 33, 34, 35, 36, 37, 38, 39]);
+    this.sprite.animations.add('fire', [0, 1, 2, 3, 4, 5, 6, 7]);
     this.sprite.play('fire', 16, true);
     game.state.getCurrentState().group.add(this.sprite);
     this.sprite.anchor.setTo(0.5, 0.5);

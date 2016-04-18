@@ -8,7 +8,7 @@ var base = {
     damage: 10,
     ranged: false,
     speed: 200,
-    attackSpeed: 500,
+    attackSpeed: 400,
     attackDistance: 100,
     damageReduction: 0,
 }
@@ -24,7 +24,29 @@ var mage = {
     damageReduction: 0,
 };
 
-var valid_forms = [base, mage];
+var goblin = {
+    cost: 0,
+    name: 'goblin',
+    damage: 6,
+    ranged: false,
+    speed: 350,
+    attackSpeed: 200,
+    attackDistance: 75,
+    damageReduction: 0,
+};
+
+var ghost = {
+    cost: 0,
+    name: 'ghost',
+    damage: 20,
+    ranged: true,
+    speed: 150,
+    attackSpeed: 400,
+    attackDistance: 75,
+    damageReduction: 10,
+};
+
+var valid_forms = [base, mage, goblin, ghost];
 
 function getFormByName(name) {
     for(var i = 0; i < valid_forms.length; i++) {

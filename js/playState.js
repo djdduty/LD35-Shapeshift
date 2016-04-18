@@ -20,11 +20,17 @@ playState = {
         game.load.spritesheet("20","img/Pond8.png",128,128,1);
 
         //game.load.spritesheet("player", "img/playerbig.png",28,54,16);
-        game.load.spritesheet("base-walk", "img/soldier_altcolor.png",64,64*1,36);
-        game.load.spritesheet("base-attack", "img/soldier_attack.png",64,64*1,4);
+        game.load.spritesheet("base-walk", "img/soldier_altcolor.png",64,64,36);
+        game.load.spritesheet("base-attack", "img/soldier_attack.png",64,64,36);
 
-        game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64*1,36);
-        game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64*1,28);
+        game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64,36);
+        game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64,28);
+
+        game.load.spritesheet("goblin-walk", "img/goblinsword.png",64,64,49);
+        game.load.spritesheet("goblin-attack", "img/goblinsword.png",64,64,49);
+
+        game.load.spritesheet("ghost-walk", "img/ghost_form.png",32,32,45);
+        game.load.spritesheet("ghost-attack", "img/ghost_form.png",32,32,45);
 
         game.load.spritesheet("fireball","img/fireball.png",64,64);
         game.load.spritesheet("explosion","img/explosion.png",64,64);
