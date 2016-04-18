@@ -40,8 +40,10 @@ playState = {
 
         this.lasttime = game.time.now;
 
-        game.socket.on("worldState", function(data) { game.state.getCurrentState().onWorldState(data); });
-        game.socket.on("playerAttacked", function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
+        game.socket.on("worldState"     , function(data) { game.state.getCurrentState().onWorldState(data); });
+        game.socket.on("playerAttacked" , function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
+        game.socket.on('disconnect'     , function(data) { console.log('disconnected'); game.state.start('menu'); });
+        game.socket.on('shapeshiftError', function(data) { console.log(data); });
 
         game.state.getCurrentState().group = game.add.group();
 
@@ -110,8 +112,11 @@ playState = {
                 return;
                 break;
             case 'Space':
-                game.gameScene.getPlayer().startAttack();
-                for(i = 0;i < 10;i++) game.socket.emit('playerUse');
+                var player = game.gameScene.getPlayer();
+                if(player && player.attacking === false) {
+                    player.startAttack();
+                }
+                game.socket.emit('playerUse');
                 return;
                 break;
             default:
@@ -171,5 +176,9 @@ playState = {
         game.state.getCurrentState().group.sort('y',Phaser.Group.SORT_ASCENDING);
         //this.sprite.position.x = (Math.cos(this.timer) * 200) + 400;
         //this.sprite.position.y = (Math.sin(this.timer) * 200) + 250;
+    },
+
+    render: function() {
+        game.gameScene.render();
     }
 }

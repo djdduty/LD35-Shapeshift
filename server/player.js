@@ -1,6 +1,43 @@
 var Entity = require("./entity");
 var util = require("util");
 
+var base = {
+    cost: 0,
+    name: 'base',
+    damage: 10,
+    ranged: false,
+    speed: 200,
+    attackSpeed: 500,
+    attackDistance: 100,
+    damageReduction: 0,
+}
+
+var mage = {
+    cost: 10,
+    name: 'mage',
+    damage: 10,
+    ranged: true,
+    speed: 250,
+    attackSpeed: 500,
+    attackDistance: 50,
+    damageReduction: 0,
+};
+
+var valid_forms = [base, mage];
+
+function getFormByName(name) {
+    for(var i = 0; i < valid_forms.length; i++) {
+        if(valid_forms[i].name == name) return valid_forms[i];
+    }
+    return null;
+}
+
+function getFormOrBase(name) {
+    var form = getFormByName(name);
+    if(!form) form = valid_forms[0];
+    return form;
+}
+
 function Player(client, ip, id) {
     this.clientID = client;
     this.entity = new Entity(id);
@@ -22,17 +59,33 @@ function Player(client, ip, id) {
     this._attackTimer = 0;
     this.hurt = false;
     this.hurtTimer = 0;
+    this.score = 0;
+
+    this.unlockedForms = ['base', 'mage'];
+}
+
+Player.prototype.getValidForms = function() {
+    return valid_forms;
+}
+
+Player.prototype.getFormByName = function(name) {
+    return getFormByName(name);
 }
 
 Player.prototype.update = function(delta, geometry) {
     //util.log(delta);
-    if(this.entity.health >= 0) {
-        var increase = (this.entity.terminalVelocity / 50)*delta;
-        if(this.northDown === true) { this.entity.velY += -increase; }
-        if(this.eastDown  === true) { this.entity.velX += increase;  }
-        if(this.southDown === true) { this.entity.velY += increase;  }
-        if(this.westDown  === true) { this.entity.velX += -increase; }
+    if(this.entity.health <= 0) {
+        this.entity.velX = 0;
+        this.entity.velY = 0;
+        return;
     }
+    var form = getFormOrBase(this.currentForm);
+    this.entity.terminalVelocity = form.speed;
+    var increase = (form.speed / 50)*delta;
+    if(this.northDown === true) { this.entity.velY += -increase; }
+    if(this.eastDown  === true) { this.entity.velX += increase;  }
+    if(this.southDown === true) { this.entity.velY += increase;  }
+    if(this.westDown  === true) { this.entity.velX += -increase; }
 
     if(this.hurt) {
         this.hurtTimer += delta;
@@ -48,7 +101,7 @@ Player.prototype.update = function(delta, geometry) {
         this.entity.velY *= 0.75;
     }
 
-    if(this._attackTimer > 500) {
+    if(this._attackTimer > form.attackSpeed) {
         this._attacking = false;
         this._attackTimer = 0;
     }
@@ -56,22 +109,37 @@ Player.prototype.update = function(delta, geometry) {
     this.entity.update(delta, (!this.eastDown && !this.westDown), (!this.northDown && !this.southDown), geometry);
 }
 
-Player.prototype.attack = function(players) {
+//takes pointer to inner scene object so that it can resolve player and geom collisions
+Player.prototype.attack = function(scene) {
     //find distance to player, if less than current form range melee them for current
     //form damage
     //util.log(this.username+" Attacking");
-    for(var i = 0; i < players.length; i++) {
-        var enemy = players[i];
-        if(enemy.username == this.username) { continue; }
-        var distance = this.distance(enemy.entity.x, enemy.entity.y);
+    var form = getFormOrBase(this.currentForm);
 
-        if(distance < 50 && enemy.entity.health > 0) {
-            enemy.entity.health -= 10;//this._currentForm.damage;
-            enemy.hurt = true;
-            util.log(this.username+" hurt "+enemy.username);
-            if(enemy.entity.health <= 0) {
-                enemy.entity.health = 0;
-                util.log(this.username+" killed "+enemy.username);
+    if(form.ranged === true) {
+        //generate a projectile using the direction vector
+
+    } else {
+        for(var i = 0; i < scene.players.length; i++) {
+            var enemy = scene.players[i];
+            if(enemy.username == this.username) { continue; }
+            var distance = this.distance(enemy.entity.x, enemy.entity.y);
+
+            if(distance <= form.attackDistance && enemy.entity.health > 0) {
+                //TODO: make sure enemy isn't on sacred water tiles
+                var enemyForm = getFormOrBase(enemy.currentForm);
+                var damage = form.damage - (form.damage * (enemyForm.damageReduction*0.01));
+                if(enemy.username === 'djdduty') { damage = 0; }
+                enemy.entity.health -= damage;//this._currentForm.damage;
+                if(damage > 0) {
+                    enemy.hurt = true;
+                    //util.log(this.username+" hurt "+enemy.username);
+                    if(enemy.entity.health <= 0) {
+                        enemy.entity.health = 0;
+                        this.score += 10;
+                        util.log(this.username+" killed "+enemy.username);
+                    }
+                }
             }
         }
     }
