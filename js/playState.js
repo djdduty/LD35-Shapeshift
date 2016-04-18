@@ -16,6 +16,9 @@ playState = {
         game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64*1,36);
         game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64*1,28);
 
+        game.load.spritesheet("fireball","img/fireball.png",64,64);
+        game.load.spritesheet("explosion","img/explosion.png",64,64);
+
         game.load.image("soldierui","img/SoldierUI.png");
         game.load.image("goblinui","img/GoblinUI.png");
         game.load.image("mageui","img/MageUI.png");
