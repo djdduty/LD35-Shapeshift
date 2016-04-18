@@ -15,7 +15,7 @@ function Scene(world) {
             if(index < 3) {
                 var xpos = x * tSize;
                 var ypos = y * tSize;
-                var boundingBox = {x:xpos+20, y:ypos, width:tSize-40, height:tSize};
+                var boundingBox = {x:xpos+20, y:ypos+20, width:tSize-40, height:tSize-20};
                 this.geometry.push(boundingBox);
             }
 
