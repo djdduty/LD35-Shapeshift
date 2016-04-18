@@ -1,32 +1,7 @@
 var menuState = {
     preload: function() {
-        game.load.spritesheet("0","img/TreeA.png",128,128,1);
-        game.load.spritesheet("1","img/TreeA.png",128,128,1);
-        game.load.spritesheet("2","img/TreeA.png",128,128,1);
-        game.load.spritesheet("3","img/Grass0.png",128,128,1);
-        game.load.spritesheet("4","img/Water0.png",128,128,1);
-        game.load.spritesheet("5","img/Concrete0.png",128,128,1);
-        game.load.spritesheet("10","img/TreeA-Top.png",128,128,1);
-        game.load.spritesheet("11","img/TreeA-Top.png",128,128,1);//TODO: make TreeB-Top
-        game.load.spritesheet("12","img/Pond0.png",128,128,1);
-        game.load.spritesheet("13","img/Pond1.png",128,128,1);
-        game.load.spritesheet("14","img/Pond2.png",128,128,1);
-        game.load.spritesheet("15","img/Pond3.png",128,128,1);
-        game.load.spritesheet("16","img/Pond4.png",128,128,1);
-        game.load.spritesheet("17","img/Pond5.png",128,128,1);
-        game.load.spritesheet("18","img/Pond6.png",128,128,1);
-        game.load.spritesheet("19","img/Pond7.png",128,128,1);
-        game.load.spritesheet("20","img/Pond8.png",128,128,1);
-
-        //game.load.spritesheet("player", "img/playerbig.png",28,54,16);
-        game.load.spritesheet("base-walk", "img/soldier_altcolor.png",64,64,36);
-        game.load.spritesheet("base-attack", "img/soldier_attack.png",64,64,36);
-
         game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64,36);
         game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64,28);
-
-        game.load.spritesheet("goblin-walk", "img/goblinsword.png",64,64,49);
-        game.load.spritesheet("goblin-attack", "img/goblinsword.png",64,64,49);
 
         game.load.spritesheet("ghost-walk", "img/ghost_form.png",32,32,45);
         game.load.spritesheet("ghost-attack", "img/ghost_form.png",32,32,45);
@@ -35,16 +10,6 @@ var menuState = {
         game.load.spritesheet("zombie-attack", "img/zombie7.png",64,64,12);
 
         game.load.spritesheet("fireball","img/fireball.png",64,64);
-        game.load.spritesheet("explosion","img/explosion.png",64,64);
-
-        game.load.image("soldierui","img/SoldierUI.png");
-        game.load.image("goblinui","img/GoblinUI.png");
-        game.load.image("mageui","img/MageUI.png");
-        game.load.image("ghostui","img/GhostUI.png");
-        game.load.image("zombieui","img/ZombieUI.png");
-
-        game.load.image("mouse","img/mouse.png");
-        game.load.image("arrows","img/arrows.png");
     },
 
     create: function() {
