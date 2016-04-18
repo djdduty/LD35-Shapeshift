@@ -68,6 +68,7 @@ playState = {
                     sprite = game.add.sprite(x*128,y*128-32,""+game.gameScene.scene.world.treeTops[y][x]);
                     game.state.getCurrentState().group.add(sprite);
                     this.treeTops.push(sprite);
+                    this.group.add(sprite);
                 }
             }
         }
@@ -208,6 +209,7 @@ playState = {
     },
 
     update: function() {
+        game.world.bringToTop(this.group);
         delta = (game.time.now - this.lasttime);
         this.lasttime = game.time.now;
         if(game.gameScene) {
