@@ -22,10 +22,10 @@ var purchaseState = {
 
         for(var i = 0; i < formSales.length; i++) {
             var sale = formSales[i];
-            var sprite = game.add.sprite(game.width/2-374, (i+1)*128+30, sale.sprite);
+            var sprite = game.add.sprite(game.width/2-324, (i+1)*128+30, sale.sprite);
             //var text   = game.add.text(game.width/2-300, (i+1)*128, {font: '24px Arial', fill: "#FFFFFF"});
-            var text   = game.add.text(game.width/2-300, (i+1)*128-15, sale.desc, {font: '24px Arial', fill: '#FFFFFF', wordWrap: true, wordWrapWidth: 600});
-            var cost   = game.add.text(game.width/2-300, (i+1)*128+60, "Cost: "+sale.cost, {font: '24px Arial', fill: '#8a8a8a'});
+            var text   = game.add.text(game.width/2-250, (i+1)*128-15, sale.desc, {font: '24px Arial', fill: '#FFFFFF', wordWrap: true, wordWrapWidth: 600});
+            var cost   = game.add.text(game.width/2-250, (i+1)*128+60, "Cost: "+sale.cost, {font: '24px Arial', fill: '#8a8a8a'});
             //, wordWrap: true, wordWrapWidth: 300
             sprite.anchor.setTo(0.5, 0.5);
             sprite.inputEnabled = true;

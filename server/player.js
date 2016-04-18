@@ -181,7 +181,6 @@ Player.prototype.attack = function(scene, direction) {
                 //TODO: make sure enemy isn't on sacred water tiles
                 var enemyForm = getFormOrBase(enemy.currentForm);
                 var damage = form.damage - (form.damage * (enemyForm.damageReduction*0.01));
-                if(enemy.username === 'djdduty') { damage = 0; }
                 enemy.entity.health -= damage;//this._currentForm.damage;
                 if(damage > 0) {
                     enemy.hurt = true;

@@ -1,57 +1,22 @@
 playState = {
     preload: function()
     {
+    },
+
+    create: function() {
         this.poolHelper = game.add.text(game.width/2, game.height-100, '', {font: '34px Arial', fill: '#FFFFFF'});
         this.poolHelper.stroke = '#000000';
         this.poolHelper.strokeThickness = 5;
         this.poolHelper.anchor.setTo(0.5, 0.5);
         this.poolHelper.fixedToCamera = true;
 
-        game.load.spritesheet("0","img/TreeA.png",128,128,1);
-        game.load.spritesheet("1","img/TreeA.png",128,128,1);
-        game.load.spritesheet("2","img/TreeA.png",128,128,1);
-        game.load.spritesheet("3","img/Grass0.png",128,128,1);
-        game.load.spritesheet("4","img/Water0.png",128,128,1);
-        game.load.spritesheet("5","img/Concrete0.png",128,128,1);
-        game.load.spritesheet("10","img/TreeA-Top.png",128,128,1);
-        game.load.spritesheet("11","img/TreeA-Top.png",128,128,1);//TODO: make TreeB-Top
-        game.load.spritesheet("12","img/Pond0.png",128,128,1);
-        game.load.spritesheet("13","img/Pond1.png",128,128,1);
-        game.load.spritesheet("14","img/Pond2.png",128,128,1);
-        game.load.spritesheet("15","img/Pond3.png",128,128,1);
-        game.load.spritesheet("16","img/Pond4.png",128,128,1);
-        game.load.spritesheet("17","img/Pond5.png",128,128,1);
-        game.load.spritesheet("18","img/Pond6.png",128,128,1);
-        game.load.spritesheet("19","img/Pond7.png",128,128,1);
-        game.load.spritesheet("20","img/Pond8.png",128,128,1);
+        this.shapeHelper = game.add.text(game.width/2, 100, '', {font: '34px Arial', fill: '#FF0000'});
+        this.shapeHelper.stroke = '#000000';
+        this.shapeHelper.strokeThickness = 5;
+        this.shapeHelper.anchor.setTo(0.5, 0.5);
+        this.shapeHelper.fixedToCamera = true;
+        this.shapeHelperTimer = 0;
 
-        //game.load.spritesheet("player", "img/playerbig.png",28,54,16);
-        game.load.spritesheet("base-walk", "img/soldier_altcolor.png",64,64,36);
-        game.load.spritesheet("base-attack", "img/soldier_attack.png",64,64,36);
-
-        game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64,36);
-        game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64,28);
-
-        game.load.spritesheet("goblin-walk", "img/goblinsword.png",64,64,49);
-        game.load.spritesheet("goblin-attack", "img/goblinsword.png",64,64,49);
-
-        game.load.spritesheet("ghost-walk", "img/ghost_form.png",32,32,45);
-        game.load.spritesheet("ghost-attack", "img/ghost_form.png",32,32,45);
-
-        game.load.spritesheet("zombie-walk", "img/zombie7.png",64,64,12);
-        game.load.spritesheet("zombie-attack", "img/zombie7.png",64,64,12);
-
-        game.load.spritesheet("fireball","img/fireball.png",64,64);
-        game.load.spritesheet("explosion","img/explosion.png",64,64);
-
-        game.load.image("soldierui","img/SoldierUI.png");
-        game.load.image("goblinui","img/GoblinUI.png");
-        game.load.image("mageui","img/MageUI.png");
-        game.load.image("ghostui","img/GhostUI.png");
-        game.load.image("zombieui","img/ZombieUI.png");
-    },
-
-    create: function() {
         this.keyboard = game.input.keyboard;
         var spacekey = this.keyboard.addKey(Phaser.Keyboard.ESC);
         spacekey.onDown.addOnce(this.pause, this);
@@ -72,7 +37,12 @@ playState = {
         game.socket.on("worldState"     , function(data) { game.state.getCurrentState().onWorldState(data); });
         game.socket.on("playerAttacked" , function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
         game.socket.on('disconnect'     , function(data) { console.log('disconnected'); game.state.start('menu'); });
-        game.socket.on('shapeshiftError', function(data) { console.log(data); });
+        game.socket.on('shapeshiftError', function(data) {
+            var state = game.state.getCurrentState();
+            if(!state || !state.shapeHelper) { return; }
+            state.shapeHelper.text = data.errMsg;
+            state.shapeHelperTimer = 2500;
+        });
 
         game.state.getCurrentState().group = game.add.group();
 
@@ -114,13 +84,13 @@ playState = {
         this.ui3.fixedToCamera = true;
         this.ui4.fixedToCamera = true;
 
-        this.ui0.inputEnabled  = true;
+        //this.ui0.inputEnabled  = true;
         this.ui1.inputEnabled  = true;
         this.ui2.inputEnabled  = true;
         this.ui3.inputEnabled  = true;
         this.ui4.inputEnabled  = true;
 
-        this.ui0.events.onInputDown.add(this.morph0,this);
+        //this.ui0.events.onInputDown.add(this.morph0,this);
         this.ui1.events.onInputDown.add(this.morph1,this);
         this.ui2.events.onInputDown.add(this.morph2,this);
         this.ui3.events.onInputDown.add(this.morph3,this);
@@ -277,6 +247,13 @@ playState = {
             game.world.bringToTop(this.poolHelper);
         } else {
             this.poolHelper.text = "";
+        }
+
+        if(this.shapeHelperTimer <= 0) {
+            this.shapeHelper.text = '';
+        } else {
+            this.shapeHelperTimer -= delta;
+            game.world.bringToTop(this.shapeHelper);
         }
     },
 

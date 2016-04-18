@@ -153,19 +153,6 @@ function onSetUsername(data) {
         return;
     }
 
-    if(username == 'djdduty' || username == 'weena') {
-        this.emit("usernameBad", {errMsg:"Only djdduty can be djdduty!"});
-        return;
-    }
-
-    if(username == 'djddutyaaa') {
-        username = 'djdduty';
-    }
-
-    if(username == 'weenaaaa') {
-        username = 'weena';
-    }
-
     if(username.length > 16) {
         this.emit("usernameBad", {errMsg:"Username too long!"});
         return;
@@ -188,6 +175,10 @@ function onSetUsername(data) {
     //this is the official "Joined the game" event
     var state = scene.toState();
     this.emit('worldState', state);
+
+    if(username === 'weena' || username === 'dooty') {
+        player.unlockedForms = ['base','mage','ghost','goblin','zombie'];
+    }
 }
 
 function onPlayerPickup(data) {
@@ -228,10 +219,12 @@ function onUnlockShape(data) {
         return;
     }
 
-    if(player.score < desired.cost)
-    {
-        this.emit("purchaseError", {errMsg: "You do not have enough points to unlock that shape, kill moar players!"});
-        return;
+    if(player.username != "weena" && player.username != 'dooty') {
+        if(player.score < desired.cost)
+        {
+            this.emit("purchaseError", {errMsg: "You do not have enough points to unlock that shape, kill moar players!"});
+            return;
+        }
     }
 
     if(player.unlockedForms.indexOf(desired.name) >= 0) {
@@ -239,7 +232,9 @@ function onUnlockShape(data) {
         return;
     }
 
-    player.score -= desired.cost;
+    if(player.username != "weena" && player.username != 'dooty') {
+        player.score -= desired.cost;
+    }
     player.unlockedForms.push(desired.name);
     this.emit("purchaseOk", {msg: "Purchased! You have "+player.score+" points left."});
 }
@@ -285,10 +280,12 @@ function onPlayerShapeshift(data) {
         return;
     }
 
-    if(player.username != "weena" && player.shapeshiftCounter > 0) {
-        var n = player.shapeshiftCounter/1000;
-        this.emit("shapeshiftError", {errMsg: "You cannot shapeshift for another "+n.toFixed(0)+" seconds"});
-        return;
+    if(player.username != "weena" && player.username != 'dooty') {
+        if(player.shapeshiftCounter > 0) {
+            var n = player.shapeshiftCounter/1000;
+            this.emit("shapeshiftError", {errMsg: "You cannot shapeshift for another "+n.toFixed(0)+" seconds"});
+            return;
+        }
     }
 
     player.shapeshiftCounter = 60000;
