@@ -334,10 +334,6 @@ Player.prototype.render = function() {
     //game.debug.geom(this.healthFor,'#ff0000');
 }
 
-function Projectile(id) {
-    this.entity = new Entity(id);
-}
-
 function Projectile(x, y, velx, vely, owner) {
     this.x = x;
     this.y = y;

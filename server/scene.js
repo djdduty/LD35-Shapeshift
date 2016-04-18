@@ -31,7 +31,7 @@ Scene.prototype.update = function(deltaTime) {
         this.players[i].update(deltaTime, this.geometry);
     }
 
-    for(var i = 0; i < this.projectiles.length; i++) {
+    for(var i = this.projectiles.length-1; i >= 0; i++) {
         var projectile = this.projectiles[i];
         projectile.update(deltaTime);
         for(var n = 0; n < this.players.length; n++) {
@@ -48,7 +48,8 @@ Scene.prototype.update = function(deltaTime) {
                         var killer = this.getPlayerByUsername(projectile.owner);
                         if(killer) { killer.score += 10; }
                     }
-                    this.removeProjectile(i);
+                    this.removeProjectile(0);
+                    continue;
                 }
             }
         }
@@ -56,7 +57,7 @@ Scene.prototype.update = function(deltaTime) {
         for(var n = 0; n < this.geometry.length; n++) {
             var geom = this.geometry[n];
             if(projectile.intersects(geom.x, geom.y, geom.width, geom.height)) {
-                this.removeProjectile(i);
+                this.removeProjectile(0);
             }
         }
         //check intersection with players and do damage if not owner
