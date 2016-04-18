@@ -76,10 +76,12 @@ function Player(client, id) {
         walkSprite.animations.add('hurt-right', form.hurtRight);
         walkSprite.animations.add('hurt-up'   , form.hurtUp);
         walkSprite.animations.add('hurt-down' , form.hurtDown);
-        
+
         walkSprite.visible = false;
         walkSprite.smoothed = false;
         walkSprite.anchor.setTo(0.5, 0.5);
+
+        game.state.getCurrentState().group.add(walkSprite);
 
         var attackSprite = game.add.sprite(form.frameWidth, form.frameHeight, form.spritePrefix+'-attack');
         attackSprite.animations.add('attack-right', form.attackRight);
@@ -89,6 +91,8 @@ function Player(client, id) {
         attackSprite.visible = false;
         attackSprite.smoothed = false;
         attackSprite.anchor.setTo(0.5, 0.5);
+
+        game.state.getCurrentState().group.add(attackSprite);
 
         var formSheet = {name: form.name, walk: walkSprite, attack: attackSprite, data: form};
         this.forms.push(formSheet);

@@ -15,6 +15,12 @@ playState = {
 
         game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64*1,36);
         game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64*1,28);
+
+        game.load.image("soldierui","img/SoldierUI.png");
+        game.load.image("soldierui","img/GoblinUI.png");
+        game.load.image("soldierui","img/MageUI.png");
+        game.load.image("soldierui","img/GhostUI.png");
+        game.load.image("soldierui","img/ZombieUI.png");
     },
 
     create: function() {
@@ -37,12 +43,16 @@ playState = {
         game.socket.on("worldState", function(data) { game.state.getCurrentState().onWorldState(data); });
         game.socket.on("playerAttacked", function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
 
+        game.state.getCurrentState().group = game.add.group();
+
         for(y = 0;y < game.gameScene.scene.world.staticEntities.length;y++)
         {
             for(x = 0;x < game.gameScene.scene.world.staticEntities[y].length;x++)
             {
-                if(game.gameScene.scene.world.staticEntities[y][x] > -1) {
-                    sprite = game.add.sprite(x*128,y*128,""+game.gameScene.scene.world.staticEntities[y][x]);
+                var tid = game.gameScene.scene.world.staticEntities[y][x];
+                if(tid > -1) {
+                    sprite = game.add.sprite(x*128,y*128,""+tid);
+                    //if(tid <= 2 || tid == 10 || tid == 11) game.state.getCurrentState().group.add(sprite);
                 }
             }
         }
@@ -54,10 +64,13 @@ playState = {
             {
                 if(game.gameScene.scene.world.treeTops[y][x] > -1) {
                     sprite = game.add.sprite(x*128,y*128-32,""+game.gameScene.scene.world.treeTops[y][x]);
+                    //game.state.getCurrentState().group.add(sprite);
                     this.treeTops.push(sprite);
                 }
             }
         }
+
+        game.state.getCurrentState().group.sort();
     },
 
     onWorldState: function(data) {
@@ -67,7 +80,6 @@ playState = {
             game.gameScene.fromState(data);
         }
     },
-
     onKeyDown: function(e) {
         var direction = '';
         if(e.repeat === true) return;
@@ -99,7 +111,7 @@ playState = {
                 break;
             case 'Space':
                 game.gameScene.getPlayer().startAttack();
-                game.socket.emit('playerUse');
+                for(i = 0;i < 10;i++) game.socket.emit('playerUse');
                 return;
                 break;
             default:
@@ -153,9 +165,10 @@ playState = {
             game.gameScene.update(delta);
         }
 
-        for(var i = 0; i < this.treeTops.length; i++) {
-            this.treeTops[i].bringToTop(); //TODO: Use groups and sort by y
-        }
+        //for(var i = 0; i < this.treeTops.length; i++) {
+        //    this.treeTops[i].bringToTop(); //TODO: Use groups and sort by y
+        //}
+        game.state.getCurrentState().group.sort('y',Phaser.Group.SORT_ASCENDING);
         //this.sprite.position.x = (Math.cos(this.timer) * 200) + 400;
         //this.sprite.position.y = (Math.sin(this.timer) * 200) + 250;
     }
