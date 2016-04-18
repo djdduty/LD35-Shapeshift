@@ -16,11 +16,14 @@ playState = {
         game.load.spritesheet("mage-walk", "img/mage_walk.png",64,64*1,36);
         game.load.spritesheet("mage-attack", "img/mage_cast.png",64,64*1,28);
 
+        game.load.spritesheet("fireball","img/fireball.png",64,64);
+        game.load.spritesheet("explosion","img/explosion.png",64,64);
+
         game.load.image("soldierui","img/SoldierUI.png");
-        game.load.image("soldierui","img/GoblinUI.png");
-        game.load.image("soldierui","img/MageUI.png");
-        game.load.image("soldierui","img/GhostUI.png");
-        game.load.image("soldierui","img/ZombieUI.png");
+        game.load.image("goblinui","img/GoblinUI.png");
+        game.load.image("mageui","img/MageUI.png");
+        game.load.image("ghostui","img/GhostUI.png");
+        game.load.image("zombieui","img/ZombieUI.png");
     },
 
     create: function() {
@@ -55,8 +58,7 @@ playState = {
                 var tid = game.gameScene.scene.world.staticEntities[y][x];
                 if(tid > -1) {
                     sprite = game.add.sprite(x*128,y*128,""+tid);
-                    //if(tid <= 2 || tid == 10 || tid == 11) game.state.getCurrentState().group.add(sprite);
-                    //this.group.add(sprite);
+                    game.state.getCurrentState().group.add(sprite);
                 }
             }
         }
@@ -68,14 +70,58 @@ playState = {
             {
                 if(game.gameScene.scene.world.treeTops[y][x] > -1) {
                     sprite = game.add.sprite(x*128,y*128-32,""+game.gameScene.scene.world.treeTops[y][x]);
-                    //game.state.getCurrentState().group.add(sprite);
+                    game.state.getCurrentState().group.add(sprite);
                     this.treeTops.push(sprite);
                     this.group.add(sprite);
                 }
             }
         }
 
-        this.group.sort();
+        game.state.getCurrentState().group.sort();
+
+        this.ui0 = game.add.sprite(0, 0,"soldierui");
+        this.ui1 = game.add.sprite(0, 128,"goblinui");
+        this.ui2 = game.add.sprite(0, 256,"mageui");
+        this.ui3 = game.add.sprite(0, 384,"ghostui");
+        this.ui4 = game.add.sprite(0, 512,"zombieui");
+
+        this.ui0.fixedToCamera = true;
+        this.ui1.fixedToCamera = true;
+        this.ui2.fixedToCamera = true;
+        this.ui3.fixedToCamera = true;
+        this.ui4.fixedToCamera = true;
+
+        this.ui0.inputEnabled  = true;
+        this.ui1.inputEnabled  = true;
+        this.ui2.inputEnabled  = true;
+        this.ui3.inputEnabled  = true;
+        this.ui4.inputEnabled  = true;
+
+        this.ui0.events.onInputDown.add(this.morph0,this);
+        this.ui1.events.onInputDown.add(this.morph1,this);
+        this.ui2.events.onInputDown.add(this.morph2,this);
+        this.ui3.events.onInputDown.add(this.morph3,this);
+        this.ui4.events.onInputDown.add(this.morph4,this);
+    },
+    morph0: function()
+    {
+        game.socket.emit('unlockShape', {form: 'soldier'});
+    },
+    morph1: function()
+    {
+        game.socket.emit('unlockShape', {form: 'goblin'});
+    },
+    morph2: function()
+    {
+        game.socket.emit('unlockShape', {form: 'mage'});
+    },
+    morph3: function()
+    {
+        game.socket.emit('unlockShape', {form: 'ghost'});
+    },
+    morph4: function()
+    {
+        game.socket.emit('unlockShape', {form: 'zombie'});
     },
 
     onClick: function(data) {
