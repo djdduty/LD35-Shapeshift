@@ -17,7 +17,7 @@ var purchaseState = {
             {sprite: "goblinui" , cost: 20, desc: "A nasty goblin, high attack speed, high movement speed, low damage."                            , onDown: function() { game.socket.emit('unlockShape', {form: "goblin" }); } },
             {sprite: "mageui"   , cost: 10, desc: "A powerful mage, ranged attacks, fast attack speed, fast movement speed, moderate damage."      , onDown: function() { game.socket.emit('unlockShape', {form: "mage"   }); } },
             {sprite: "ghostui"  , cost: 30, desc: "A ghastly ghoul, ranged attacks, moderate attack speed, low movement speed, high damage."       , onDown: function() { game.socket.emit('unlockShape', {form: "ghost"  }); } },
-            {sprite: "zombieui" , cost: 30, desc: "A hefty zombie, low attack speed, low movement speed, high damage, high damage resistance."     , onDown: function() { game.socket.emit('unlockShape', {form: "zombie" }); } }
+            {sprite: "zombieui" , cost: 50, desc: "A hefty zombie, low attack speed, low movement speed, high damage, high damage resistance."     , onDown: function() { game.socket.emit('unlockShape', {form: "zombie" }); } }
         ];
 
         for(var i = 0; i < formSales.length; i++) {
