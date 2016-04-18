@@ -123,12 +123,8 @@ var lastEntityId;
 function onConnect(client) {
     var ip = client.request.socket.remoteAddress;
     ip = ip.substring(7, ip.length);
-
     util.log("Client connected: "+client.id+" from "+ip);
     client.emit("identify", {id: client.id});
-
-    var player = new Player(client.id, ip, ++lastEntityId);
-    scene.addPlayer(player);
 
     client.on("disconnect", onDisconnect);
     client.on("setUsername", onSetUsername);
@@ -136,12 +132,16 @@ function onConnect(client) {
     client.on("playerMove", onPlayerMove);
     client.on("playerUse", onPlayerUse);
     client.on("playerShapeshift", onPlayerShapeshift);
+    client.on("unlockShape", onUnlockShape);
     //todo add player
 }
 
 function onDisconnect() {
-    util.log("Client disconnected: "+this.id)
-    scene.removePlayer(this.id);
+    var player = scene.getPlayerByClient(this.id);
+    var id = this.id;
+    if(player) { id = player.username; }
+    util.log("Client disconnected: "+id);
+    if(player) { scene.removePlayer(this.id); }
     //todo remove player
 }
 
@@ -153,15 +153,34 @@ function onSetUsername(data) {
         return;
     }
 
-    var existing = scene.getPlayerByUsername(data.username);
+    if(username == 'djdduty') {
+        this.emit("usernameBad", {errMsg:"Only djdduty can be djdduty!"});
+        return;
+    }
+
+    if(username == 'djddutyaaa') {
+        username = 'djdduty';
+    }
+
+    if(username.length > 16) {
+        this.emit("usernameBad", {errMsg:"Username too long!"});
+        return;
+    }
+
+    var existing = scene.getPlayerByUsername(username);
     if(existing) {
         this.emit("usernameBad", {errMsg:"Username already in use!"});
         return;
     }
     this.emit("usernameOk");
 
+    var ip = this.request.socket.remoteAddress;
+    ip = ip.substring(7, ip.length);
+    var player = new Player(this.id, '000.000.000.000', ++lastEntityId);
+    scene.addPlayer(player);
+
     var player = scene.getPlayerByClient(this.id);
-    if(player) player.username = data.username;
+    if(player) player.username = username;
     //this is the official "Joined the game" event
     var state = scene.toState();
     this.emit('worldState', state);
@@ -194,16 +213,64 @@ function onPlayerMove(data) {
     }
 }
 
+function onUnlockShape(data) {
+    var player = scene.getPlayerByClient(this.id);
+    if(!player) { return; }
+
+    var desired = player.getFormByName(data.form);
+    if(!desired)
+    {
+        this.emit("purchaseError", {errMsg: "The desired shape is not valid"});
+        return;
+    }
+
+    if(player.score < desired.cost)
+    {
+        this.emit("purchaseError", {errMsg: "You do not have enough points to unlock that shape, kill moar players!"});
+        return;
+    }
+
+    player.score -= desired.cost;
+    player.unlockedForms.push(desired.name);
+}
+
 function onPlayerUse(data) {
     //Verify item use and make it so
     var player = scene.getPlayerByClient(this.id);
-    this.broadcast.emit("playerAttacked", {username: player.username});
-    player._attacking = true;
-    //find players close by, damage them.
-    player.attack(scene.scene.players);
+    if(player._attacking === false) {
+        if(player.entity.health > 0) {
+            this.broadcast.emit("playerAttacked", {username: player.username});
+            player._attacking = true;
+            //find players close by, damage them.
+            player.attack(scene.scene);
+        }
+    }
+    if(player.entity.health <= 0) {
+        player.currentForm = 'base';
+        player.entity.health = 100;
+        player.entity.x = 512;
+        player.entity.y = 512;
+        player.score *= 0.9;
+        player.score = Math.floor(player.score);
+    }
 }
 
 function onPlayerShapeshift(data) {
+    var player = scene.getPlayerByClient(this.id);
+    if(!player) { return; }
+
+    var name = data.form;
+    var form = player.getFormByName(name);
+
+    if(!form) {
+        this.emit("shapeshiftError", {errMsg: "Invalid shape"});
+        return;
+    }
+
+    if(player.unlockedForms.indexOf(name) < 0) {
+        this.emit("shapeshiftError", {errMsg: "You have not unlocked that shape!"});
+        return;
+    }
     //Verify shapeshift and make it so
     var player = scene.getPlayerByClient(this.id);
     if(!player) { return; }
@@ -213,3 +280,15 @@ function onPlayerShapeshift(data) {
 }
 
 init();
+
+function exitHandler(options, err) {
+    if (options.cleanup) console.log('clean');
+    if (err) console.log(err.stack);
+    if (options.exit) process.exit();
+}
+
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));

@@ -1,6 +1,12 @@
 //classes don't exist in es5, which is what we want to support
 
 humanForm = {
+    damage: 10,
+    ranged: false,
+    speed: 200,
+    attackSpeed: 500,
+    attackDistance: 50,
+    damageReduction: 0,
     name: 'base',
     spritePrefix: 'base', //will look for base-walk and base-attack
     frameWidth: 64,
@@ -17,15 +23,21 @@ humanForm = {
     attackLeft : [1],
     attackDown : [2],
     attackRight: [3],
-    hurtRight  : 27,
-    hurtLeft   : 9,
-    hurtUp     : 0,
-    hurtDown   : 18,
+    hurtRight  : [27],
+    hurtLeft   : [9],
+    hurtUp     : [0],
+    hurtDown   : [18],
     attackfps: 9,
     fps: 16
 }
 
 mageForm = {
+    damage: 10,
+    ranged: true,
+    speed: 250,
+    attackSpeed: 500,
+    attackDistance: 50,
+    damageReduction: 0,
     name: 'mage',
     spritePrefix: 'mage',
     frameWidth: 64,
@@ -51,6 +63,18 @@ mageForm = {
 }
 
 valid_forms = [humanForm, mageForm];
+function getFormByName(name) {
+    for(var i = 0; i < valid_forms.length; i++) {
+        if(valid_forms[i].name == name) return valid_forms[i];
+    }
+    return null;
+}
+
+function getFormOrBase(name) {
+    var form = getFormByName(name);
+    if(!form) form = valid_forms[0];
+    return form;
+}
 
 function Player(client, id) {
     this.clientID = client;
@@ -76,7 +100,7 @@ function Player(client, id) {
         walkSprite.animations.add('hurt-right', form.hurtRight);
         walkSprite.animations.add('hurt-up'   , form.hurtUp);
         walkSprite.animations.add('hurt-down' , form.hurtDown);
-        
+
         walkSprite.visible = false;
         walkSprite.smoothed = false;
         walkSprite.anchor.setTo(0.5, 0.5);
@@ -115,6 +139,27 @@ function Player(client, id) {
     this.attacking = false;
     this.attackTimer = 0;
     this.hurt = false;
+
+    this.score = 0;
+
+    var width = 100;
+    var height = 10;
+    var bmd = game.add.bitmapData(width, height);
+    var bmbb = game.add.bitmapData(width, height);
+
+    bmd.ctx.beginPath();
+    bmd.ctx.rect(0, 0, width, height);
+    bmd.ctx.fillStyle = '#FF0000';
+    bmd.ctx.fill();
+
+    this.healthBar = game.add.sprite(0, 0, bmd);
+    //this.health.anchor.setTo(0.5, 0.5);
+
+    bmbb.ctx.beginPath();
+    bmbb.ctx.rect(0,0,width,height);
+    bmbb.ctx.fillStyle = '#000000';
+    bmbb.ctx.fill();
+    this.healthBarBack = game.add.sprite(0,0,bmbb);
 }
 
 Player.prototype.getFormByName = function(name) {
@@ -169,13 +214,20 @@ Player.prototype.getCurrentAnimation = function() {
 }
 
 Player.prototype.update = function(delta, geometry) {
-    if(this.entity.health > 0) {
-        var increase = (this.entity.terminalVelocity / 50)*delta;
-        if(this.northDown === true) { this.entity.velY += -increase; }
-        if(this.southDown === true) { this.entity.velY += increase;  }
-        if(this.eastDown  === true) { this.entity.velX += increase;  }
-        if(this.westDown  === true) { this.entity.velX += -increase; }
+    var formStat = getFormOrBase(this.currentForm);
+    this.entity.terminalVelocity = formStat.speed;
+    if(this.entity.health <= 0) {
+        this.entity.velX = 0;
+        this.entity.velY = 0;
+        this.healthBar.width = 0;
+        return;
     }
+
+    var increase = (formStat.speed / 50)*delta;
+    if(this.northDown === true) { this.entity.velY += -increase; }
+    if(this.southDown === true) { this.entity.velY += increase;  }
+    if(this.eastDown  === true) { this.entity.velX += increase;  }
+    if(this.westDown  === true) { this.entity.velX += -increase; }
 
     if(this.attacking === true) {
         this.attackTimer += delta;
@@ -183,7 +235,7 @@ Player.prototype.update = function(delta, geometry) {
         this.entity.velY *= 0.75;
     }
 
-    if(this.attackTimer >= 500) {
+    if(this.attackTimer >= formStat.attackSpeed) {
         this.attacking = false;
         this.attackTimer = 0;
     }
@@ -202,6 +254,8 @@ Player.prototype.update = function(delta, geometry) {
         try {
             animation.sprite.animations.play(animation.name, animation.fps, true);
         } catch(e) {
+            console.log(animation);
+            console.log(animation.sprite);
             console.log(animation.name);
             console.log(e);
         }
@@ -213,15 +267,32 @@ Player.prototype.update = function(delta, geometry) {
 
     animation.sprite.x = this.entity.x;
     animation.sprite.y = this.entity.y;
-    this.nameLabel.text = this.username;
+    this.nameLabel.text = this.username + " ("+this.score+")";
     this.nameLabel.x = this.entity.x;
-    this.nameLabel.y = this.entity.y - 32;
+    this.nameLabel.y = this.entity.y - 50;
     game.world.bringToTop(this.nameLabel); //TODO Groups
+
+    var x = this.entity.x-50;
+    var y = this.entity.y - 35;
+    this.healthBar.x = x;
+    this.healthBar.y = y;
+    this.healthBarBack.x = x;
+    this.healthBarBack.y = y;
+    this.healthBar.width = 100 - (100-this.entity.health);
+    game.world.bringToTop(this.healthBarBack); //TODO Groups
+    game.world.bringToTop(this.healthBar); //TODO Groups
 }
 
 Player.prototype.removeGraphics = function() {
-    game.world.remove(this.sprite);
     game.world.remove(this.nameLabel);
+    for(var i = 0; i < this.forms.length; i++) {
+        var form = this.forms[i];
+        game.world.remove(form.walk);
+        game.world.remove(form.attack);
+    }
+    game.world.remove(this.lastSprite);
+    game.world.remove(this.healthBar);
+    game.world.remove(this.healthBarBack);
 }
 
 Player.prototype.startAttack = function() {
@@ -241,6 +312,14 @@ Player.prototype.startAttack = function() {
         animation.sprite.y = this.entity.y;
         animation.sprite.visible = true;
     }
+}
+
+Player.prototype.render = function() {
+    var x = this.entity.x-50;
+    var y = this.entity.y - 40;
+    //game.
+    //game.debug.geom(this.healthBack,'#000000');
+    //game.debug.geom(this.healthFor,'#ff0000');
 }
 
 function Projectile(id) {

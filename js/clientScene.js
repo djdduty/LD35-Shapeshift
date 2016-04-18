@@ -31,3 +31,9 @@ ClientScene.prototype.thisPlayer = function() {
     }
     return this.scene.getPlayerByClient(this.clientID);
 }
+
+ClientScene.prototype.render = function() {
+    for(var i = 0; i < this.scene.players.length; i++) {
+        this.scene.players[i].render();
+    }
+}
