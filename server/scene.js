@@ -30,12 +30,50 @@ Scene.prototype.update = function(deltaTime) {
     for(var i = 0; i < this.players.length; i++) {
         this.players[i].update(deltaTime, this.geometry);
     }
+
+    for(var i = 0; i < this.projectiles.length; i++) {
+        var projectile = this.projectiles[i];
+        projectile.update(deltaTime);
+        for(var n = 0; n < this.players.length; n++) {
+            var player = this.players[n];
+            //console.log(player.username+" vs "+projectile.username);
+            //console.log(projectile);
+            if(player.username !== projectile.username) {
+                if(player.entity.intersects(projectile.x, projectile.y, projectile.width, projectile.height)) {
+                    var form = player.getFormOrBase(player.currentForm);
+                    var damage = projectile.damage - (projectile.damage * (form.damageReduction*0.01));
+                    player.entity.health -= damage;
+                    player.hurt = true;
+                    if(player.health === 0) {
+                        var killer = this.getPlayerByUsername(projectile.owner);
+                        if(killer) { killer.score += 10; }
+                    }
+                    this.removeProjectile(i);
+                }
+            }
+        }
+
+        for(var n = 0; n < this.geometry.length; n++) {
+            var geom = this.geometry[n];
+            if(projectile.intersects(geom.x, geom.y, geom.width, geom.height)) {
+                this.removeProjectile(i);
+            }
+        }
+        //check intersection with players and do damage if not owner
+    }
 }
 
 Scene.prototype.toState = function() {
     var disconnected = this.disconnected;
     this.disconnected = [];
     return {players: this.players, projectiles: this.projectiles, disconnected: disconnected};
+}
+
+Scene.prototype.getProjectileById = function(id) {
+    for(var i = 0; i < this.projectiles.length; i++) {
+        if(this.projectiles[i].id === id) return this.projectiles[i];
+    }
+    return null;
 }
 
 Scene.prototype.fromState = function(state) {
@@ -60,6 +98,32 @@ Scene.prototype.fromState = function(state) {
         for(var prop in remote.entity) {
             var val = remote.entity[prop];
             local.entity[prop] = val;
+        }
+    }
+
+    for(var i =0; i < this.projectiles.length; i++) {
+        this.projectiles[i].touched = false;
+    }
+
+    for(var i = 0; i < state.projectiles.length; i++) {
+        var remote = state.projectiles[i];
+        var local = this.getProjectileById(remote.id);
+        if(!local) {
+            local = new Projectile(remote.x, remote.y, remote.velX, remote.velY, remote.owner);
+            local.id = remote.id;
+            this.projectiles.push(local);
+            console.log(this.projectiles);
+        }
+        for(var prop in remote) {
+            var val = remote[prop];
+            local[prop] = val;
+        }
+        local.touched = true;
+    }
+
+    for(var i =0; i < this.projectiles.length; i++) {
+        if(this.projectiles[i].touched == false) {
+            this.removeProjectile(i);
         }
     }
 
@@ -109,6 +173,12 @@ Scene.prototype.getPlayerByUsername = function(username) {
         }
     }
     return null;
+}
+
+Scene.prototype.removeProjectile = function(index) {
+    if(!this.projectiles[index]) { return; util.log("could not find projectile at index: "+index); }
+    this.projectiles[index].remove();
+    this.projectiles.splice(index, 1);
 }
 
 module.exports = Scene;

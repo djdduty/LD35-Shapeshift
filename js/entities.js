@@ -173,6 +173,12 @@ Player.prototype.getFormByName = function(name) {
     return null;
 }
 
+Player.prototype.getFormOrBase = function(name) {
+    var form = this.getFormByName(name);
+    if(!form) form = this.forms[0];
+    return form;
+}
+
 Player.prototype.getCurrentAnimation = function() {
     var lastAnim = this.lastAnim.split('-');
     var sprite;
@@ -293,6 +299,8 @@ Player.prototype.removeGraphics = function() {
         var form = this.forms[i];
         game.world.remove(form.walk);
         game.world.remove(form.attack);
+        game.state.getCurrentState().group.remove(form.walk);
+        game.state.getCurrentState().group.remove(form.attack);
     }
     game.world.remove(this.lastSprite);
     game.world.remove(this.healthBar);
@@ -328,4 +336,47 @@ Player.prototype.render = function() {
 
 function Projectile(id) {
     this.entity = new Entity(id);
+}
+
+function Projectile(x, y, velx, vely, owner) {
+    this.x = x;
+    this.y = y;
+    this.speed = 750;
+    this.width = 40;
+    this.height = 40;
+    this.velX = velx;
+    this.velY = vely;
+    this.id = -1;
+    this.username = owner;
+    this.sprite = game.add.sprite(this.width, this.height, '10');
+    game.state.getCurrentState().group.add(this.sprite);
+    this.sprite.anchor.setTo(0.5, 0.5);
+}
+
+Projectile.prototype.intersects = function(x1, y1, w1, h1) {
+    var x0 = this.x-this.width/2,
+    y0 = this.y+-this.height/2,
+    w0 = this.width,
+    h0 = this.height;
+    return !(x0 > x1+w1
+          || x0+w0 < x1
+          || y0 > y1+h1
+          || y0+h0 < y1);
+}
+
+Projectile.prototype.update = function(delta) {
+    var sec = delta * 0.001;
+    this.x += this.velX*sec;
+    this.y += this.velY*sec;
+
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
+
+    //returns whether we moved or not
+    return this.velX != 0 || this.velY != 0;
+}
+
+Projectile.prototype.remove = function() {
+    game.world.remove(this.sprite);
+    game.state.getCurrentState().group.remove(this.sprite);
 }

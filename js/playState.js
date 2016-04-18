@@ -37,6 +37,7 @@ playState = {
         this.keyboard.addKeyCapture(Phaser.Keyboard.LEFT);
         this.keyboard.addKeyCapture(Phaser.Keyboard.DOWN);
         this.keyboard.addKeyCapture(Phaser.Keyboard.RIGHT);
+        game.input.onDown.add(this.onClick, this);
 
         this.lasttime = game.time.now;
 
@@ -77,6 +78,17 @@ playState = {
         this.group.sort();
     },
 
+    onClick: function(data) {
+        var x = game.input.x + game.camera.x;
+        var y = game.input.y + game.camera.y;
+        var player = game.gameScene.getPlayer();
+        if(!player) return;
+        var deltaX = x - player.entity.x;
+        var deltaY = y - player.entity.y;
+        var mag = Math.sqrt((deltaX*deltaX)+(deltaY*deltaY));
+        game.socket.emit('playerUse', {angle: {x:deltaX/mag,y:deltaY/mag}});
+    },
+
     onWorldState: function(data) {
         //console.log(data);
         //TODO: setup world state
@@ -111,14 +123,6 @@ playState = {
                 break;
             case 'KeyS':
                 game.socket.emit('playerShapeshift', {form:'mage'});
-                return;
-                break;
-            case 'Space':
-                var player = game.gameScene.getPlayer();
-                if(player && player.attacking === false) {
-                    player.startAttack();
-                }
-                game.socket.emit('playerUse');
                 return;
                 break;
             default:

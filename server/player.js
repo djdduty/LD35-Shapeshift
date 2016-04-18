@@ -1,5 +1,6 @@
 var Entity = require("./entity");
 var util = require("util");
+var Projectile = require("./projectile");
 
 var base = {
     cost: 0,
@@ -72,6 +73,12 @@ Player.prototype.getFormByName = function(name) {
     return getFormByName(name);
 }
 
+Player.prototype.getFormOrBase = function(name) {
+    var form = getFormByName(name);
+    if(!form) form = valid_forms[0];
+    return form;
+}
+
 Player.prototype.update = function(delta, geometry) {
     //util.log(delta);
     if(this.entity.health <= 0) {
@@ -110,15 +117,19 @@ Player.prototype.update = function(delta, geometry) {
 }
 
 //takes pointer to inner scene object so that it can resolve player and geom collisions
-Player.prototype.attack = function(scene) {
+Player.prototype.attack = function(scene, direction) {
     //find distance to player, if less than current form range melee them for current
     //form damage
     //util.log(this.username+" Attacking");
     var form = getFormOrBase(this.currentForm);
-
+    var projectile;
     if(form.ranged === true) {
         //generate a projectile using the direction vector
-
+        var velX = 500 * direction.x;
+        var velY = 500 * direction.y;
+        //var startX = this.entity.x - this.entity.width/2;
+        projectile = new Projectile(this.entity.x, this.entity.y, velX, velY, this.username);
+        projectile.damage = form.damage;
     } else {
         for(var i = 0; i < scene.players.length; i++) {
             var enemy = scene.players[i];
@@ -143,6 +154,7 @@ Player.prototype.attack = function(scene) {
             }
         }
     }
+    return projectile;
 }
 
 Player.prototype.distance = function(x, y) {

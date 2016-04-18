@@ -242,7 +242,11 @@ function onPlayerUse(data) {
             this.broadcast.emit("playerAttacked", {username: player.username});
             player._attacking = true;
             //find players close by, damage them.
-            player.attack(scene.scene);
+            util.log(data.angle);
+            var proj = player.attack(scene.scene, data.angle);
+            if(proj) {
+                scene.scene.projectiles.push(proj);
+            }
         }
     }
     if(player.entity.health <= 0) {
