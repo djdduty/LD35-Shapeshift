@@ -1,12 +1,17 @@
 usernameState = {
+    preload: function() {
+        game.load.image("mouse","img/mouse.png");
+        game.load.image("arrows","img/arrows.png");
+    },
+
     create: function() {
-        game.socket = this.socket = io.connect("http://djdduty.com:3889", {transports: ["websocket"]});
+        game.socket = this.socket = io.connect("http://vm1.djdduty.com:3889", {transports: ["websocket"]});
         this.name = '';
         game.input.keyboard.addCallbacks(this, null, null, this.onPress);
         game.input.keyboard.addKeyCapture(Phaser.Keyboard.BACKSPACE);
         game.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
 
-        this.titleLabel = game.add.text(game.width/2, 100, 'Please Enter A Username (keyboard):', {font: '50px Arial', fill: '#ffffff'});
+        this.titleLabel = game.add.text(game.width/2, 100, 'Please Enter A Username:', {font: '50px Arial', fill: '#ffffff'});
         this.titleLabel.anchor.set(0.5);
         this.nameLabel = game.add.text(game.width/2, 200, 'Enter Username', {font: '32px Arial', fill: '#7a7a7a'});
         this.nameLabel.anchor.set(0.5);
