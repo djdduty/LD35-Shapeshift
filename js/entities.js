@@ -470,10 +470,10 @@ function Projectile(x, y, velx, vely, owner) {
 }
 
 Projectile.prototype.intersects = function(x1, y1, w1, h1) {
-    var x0 = this.x-this.width/2,
-    y0 = this.y+-this.height/2,
-    w0 = this.width,
-    h0 = this.height;
+    var x0 = this.x-this.width/2+10,
+    y0 = this.y+-this.height/2+10,
+    w0 = this.width-10,
+    h0 = this.height-10;
     return !(x0 > x1+w1
           || x0+w0 < x1
           || y0 > y1+h1
