@@ -1,3 +1,5 @@
+#!/usr/bin/env
+
 var isServer = false;
 var util = require("util"), io = require("socket.io"), ServerScene = require("./serverScene"), Player = require("./player"), World = require("./world");
 
