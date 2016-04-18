@@ -117,8 +117,8 @@ ghostForm = {
     idleDown : [27],
     attackUp   : [ 9,10,11,12,13,14],
     attackLeft : [36,37,38,39,40,41],
-    attackDown : [ 7, 8, 9,10],
-    attackRight: [36,37,38,39,40,41],
+    attackDown : [36,37,38,39,40,41],
+    attackRight: [ 9,10,11,12,13,14],
     hurtRight  : [18],
     hurtLeft   : [27],
     hurtUp     : [18],
@@ -128,7 +128,40 @@ ghostForm = {
     spriteScale: 2.0
 }
 
-valid_forms = [humanForm, mageForm, goblinForm, ghostForm];
+zombieForm = {
+    cost: 0,
+    name: 'zombie',
+    damage: 30,
+    ranged: false,
+    speed: 100,
+    attackSpeed: 500,
+    attackDistance: 150,
+    damageReduction: 50,
+    spritePrefix: 'zombie',
+    frameWidth: 64,
+    frameHeight: 64,
+    walkLeft : [ 9,10,11],
+    walkRight: [ 3, 4, 5],
+    walkUp   : [ 6, 7, 8],
+    walkDown : [ 0, 1, 2],
+    idleLeft : [ 9],
+    idleRight: [ 3],
+    idleUp   : [ 6],
+    idleDown : [ 0],
+    attackUp   : [ 8],
+    attackLeft : [11],
+    attackDown : [ 2],
+    attackRight: [ 5],
+    hurtRight  : [ 3],
+    hurtLeft   : [ 9],
+    hurtUp     : [ 6],
+    hurtDown   : [ 0],
+    attackfps: 1,
+    fps: 6,
+    spriteScale: 1.5
+}
+
+valid_forms = [humanForm, mageForm, goblinForm, ghostForm, zombieForm];
 function getFormByName(name) {
     for(var i = 0; i < valid_forms.length; i++) {
         if(valid_forms[i].name == name) return valid_forms[i];
@@ -402,6 +435,8 @@ Player.prototype.startAttack = function() {
         animation.sprite.x = this.entity.x;
         animation.sprite.y = this.entity.y;
         animation.sprite.visible = true;
+        var formStat = getFormOrBase(this.currentForm);
+        animation.sprite.scale.setTo(formStat.spriteScale);
     }
 }
 

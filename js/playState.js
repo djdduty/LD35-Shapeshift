@@ -1,6 +1,12 @@
 playState = {
     preload: function()
     {
+        this.poolHelper = game.add.text(game.width/2, game.height-100, '', {font: '34px Arial', fill: '#FFFFFF'});
+        this.poolHelper.stroke = '#000000';
+        this.poolHelper.strokeThickness = 5;
+        this.poolHelper.anchor.setTo(0.5, 0.5);
+        this.poolHelper.fixedToCamera = true;
+
         game.load.spritesheet("0","img/TreeA.png",128,128,1);
         game.load.spritesheet("1","img/TreeA.png",128,128,1);
         game.load.spritesheet("2","img/TreeA.png",128,128,1);
@@ -31,6 +37,9 @@ playState = {
 
         game.load.spritesheet("ghost-walk", "img/ghost_form.png",32,32,45);
         game.load.spritesheet("ghost-attack", "img/ghost_form.png",32,32,45);
+
+        game.load.spritesheet("zombie-walk", "img/zombie7.png",64,64,12);
+        game.load.spritesheet("zombie-attack", "img/zombie7.png",64,64,12);
 
         game.load.spritesheet("fireball","img/fireball.png",64,64);
         game.load.spritesheet("explosion","img/explosion.png",64,64);
@@ -263,6 +272,12 @@ playState = {
         game.state.getCurrentState().group.sort('y',Phaser.Group.SORT_ASCENDING);
         //this.sprite.position.x = (Math.cos(this.timer) * 200) + 400;
         //this.sprite.position.y = (Math.sin(this.timer) * 200) + 250;
+        if(player && player.onSacredTile(game.gameScene.scene)) {
+            this.poolHelper.text = "Press (SPACE) To enter the purchase menu!";
+            game.world.bringToTop(this.poolHelper);
+        } else {
+            this.poolHelper.text = "";
+        }
     },
 
     render: function() {

@@ -25,7 +25,7 @@ var mage = {
 };
 
 var goblin = {
-    cost: 0,
+    cost: 20,
     name: 'goblin',
     damage: 6,
     ranged: false,
@@ -36,7 +36,7 @@ var goblin = {
 };
 
 var ghost = {
-    cost: 0,
+    cost: 30,
     name: 'ghost',
     damage: 20,
     ranged: true,
@@ -46,7 +46,18 @@ var ghost = {
     damageReduction: 10,
 };
 
-var valid_forms = [base, mage, goblin, ghost];
+var zombie = {
+    cost: 30,
+    name: 'zombie',
+    damage: 30,
+    ranged: false,
+    speed: 100,
+    attackSpeed: 500,
+    attackDistance: 150,
+    damageReduction: 50,
+}
+
+var valid_forms = [base, mage, goblin, ghost, zombie];
 
 function getFormByName(name) {
     for(var i = 0; i < valid_forms.length; i++) {
