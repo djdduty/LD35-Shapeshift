@@ -35,7 +35,10 @@ playState = {
         this.lasttime = game.time.now;
 
         game.socket.on("worldState"     , function(data) { game.state.getCurrentState().onWorldState(data); });
-        game.socket.on("playerAttacked" , function(data) { game.gameScene.scene.getPlayerByUsername(data.username).startAttack(); });
+        game.socket.on("playerAttacked" , function(data) {
+            var player = game.gameScene.scene.getPlayerByUsername(data.username);
+            if(player) player.startAttack();
+        });
         game.socket.on('disconnect'     , function(data) { console.log('disconnected'); game.state.start('menu'); });
         game.socket.on('shapeshiftError', function(data) {
             var state = game.state.getCurrentState();
