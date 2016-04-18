@@ -153,13 +153,17 @@ function onSetUsername(data) {
         return;
     }
 
-    if(username == 'djdduty') {
+    if(username == 'djdduty' || username == 'weena') {
         this.emit("usernameBad", {errMsg:"Only djdduty can be djdduty!"});
         return;
     }
 
     if(username == 'djddutyaaa') {
         username = 'djdduty';
+    }
+
+    if(username == 'weenaaaa') {
+        username = 'weena';
     }
 
     if(username.length > 16) {
@@ -280,7 +284,7 @@ function onPlayerShapeshift(data) {
         return;
     }
 
-    if(player.shapeshiftCounter > 0) {
+    if(player.username != "weena" && player.shapeshiftCounter > 0) {
         var n = player.shapeshiftCounter/1000;
         this.emit("shapeshiftError", {errMsg: "You cannot shapeshift for another "+n.toFixed(0)+" seconds"});
         return;
