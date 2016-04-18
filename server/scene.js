@@ -31,36 +31,38 @@ Scene.prototype.update = function(deltaTime) {
         this.players[i].update(deltaTime, this.geometry);
     }
 
-    for(var i = this.projectiles.length-1; i >= 0; i++) {
-        var projectile = this.projectiles[i];
-        projectile.update(deltaTime);
-        for(var n = 0; n < this.players.length; n++) {
-            var player = this.players[n];
-            //console.log(player.username+" vs "+projectile.username);
-            //console.log(projectile);
-            if(player.username !== projectile.username) {
-                if(player.entity.intersects(projectile.x, projectile.y, projectile.width, projectile.height)) {
-                    var form = player.getFormOrBase(player.currentForm);
-                    var damage = projectile.damage - (projectile.damage * (form.damageReduction*0.01));
-                    player.entity.health -= damage;
-                    player.hurt = true;
-                    if(player.health === 0) {
-                        var killer = this.getPlayerByUsername(projectile.owner);
-                        if(killer) { killer.score += 10; }
+    if(this.projectiles.length > 0) {
+        for(var i = this.projectiles.length-1; i >= 0; i--) {
+            var projectile = this.projectiles[i];
+            projectile.update(deltaTime);
+            for(var n = 0; n < this.players.length; n++) {
+                var player = this.players[n];
+                //console.log(player.username+" vs "+projectile.username);
+                //console.log(projectile);
+                if(player.username !== projectile.username) {
+                    if(player.entity.intersects(projectile.x, projectile.y, projectile.width, projectile.height)) {
+                        var form = player.getFormOrBase(player.currentForm);
+                        var damage = projectile.damage - (projectile.damage * (form.damageReduction*0.01));
+                        player.entity.health -= damage;
+                        player.hurt = true;
+                        if(player.health === 0) {
+                            var killer = this.getPlayerByUsername(projectile.owner);
+                            if(killer) { killer.score += 10; }
+                        }
+                        this.removeProjectile(0);
+                        continue;
                     }
-                    this.removeProjectile(0);
-                    continue;
                 }
             }
-        }
 
-        for(var n = 0; n < this.geometry.length; n++) {
-            var geom = this.geometry[n];
-            if(projectile.intersects(geom.x, geom.y, geom.width, geom.height)) {
-                this.removeProjectile(0);
+            for(var n = 0; n < this.geometry.length; n++) {
+                var geom = this.geometry[n];
+                if(projectile.intersects(geom.x, geom.y, geom.width, geom.height)) {
+                    this.removeProjectile(0);
+                }
             }
+            //check intersection with players and do damage if not owner
         }
-        //check intersection with players and do damage if not owner
     }
 }
 
