@@ -264,8 +264,8 @@ playState = {
             }
         }
 
-	player.entity.velX = 0;
-	player.entity.velY = 0;
+	player.entity.velX *= 0.001;
+	player.entity.velY *= 0.001;
         game.world.bringToTop(this.group);
         delta = (game.time.now - this.lasttime);
         this.lasttime = game.time.now;
