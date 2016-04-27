@@ -267,10 +267,6 @@ playState = {
         if(player) {
 	    player.entity.velX *= 0.001;
             player.entity.velY *= 0.001;
-            player.northDown = false;
-            player.eastDown  = false;
-            player.southDown = false;
-            player.westDown  = false;
         }
         game.world.bringToTop(this.group);
         delta = (game.time.now - this.lasttime);

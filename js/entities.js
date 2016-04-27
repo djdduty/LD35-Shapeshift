@@ -342,7 +342,7 @@ Player.prototype.update = function(delta, geometry) {
         return;
     }
 
-    var increase = (formStat.speed / 50)*delta;
+    var increase = 0;//(formStat.speed / 50)*delta;
     if(this.northDown === true) { this.entity.velY += -increase; }
     if(this.southDown === true) { this.entity.velY += increase;  }
     if(this.eastDown  === true) { this.entity.velX += increase;  }
